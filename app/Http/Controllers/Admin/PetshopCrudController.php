@@ -11,7 +11,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
  * Class PetshopCrudController
- * @package App\Http\Controllers\Admin
+ * @package App\Http\Controllers\Admin                                                                   
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
 class PetshopCrudController extends CrudController
@@ -102,12 +102,20 @@ class PetshopCrudController extends CrudController
     }
 
     protected function getAllPetshop(){
-        return Petshop::all();
+        $data = Petshop::all();
+
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function getPetshop($id)
     {
-        return Petshop::find($id);
+        $data =  Petshop::find($id);
+        
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function getFormData()

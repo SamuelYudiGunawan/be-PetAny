@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\PetCrudController;
 use App\Http\Controllers\Admin\PetshopCrudController;
 
 /*
@@ -29,3 +30,6 @@ Route::post('/create-petshop', [PetshopCrudController::class, 'create'])->middle
 Route::get('/petshop-form', [PetshopCrudController::class, 'getFormData']);
 Route::get('/get-petshop', [PetshopCrudController::class, 'getAllPetshop']);
 Route::get('/get-petshop/{id}', [PetshopCrudController::class, 'getPetshop']);
+
+//PET
+Route::post('/add-pet', [PetCrudController::class, 'addPet'])->middleware(['auth:sanctum']);

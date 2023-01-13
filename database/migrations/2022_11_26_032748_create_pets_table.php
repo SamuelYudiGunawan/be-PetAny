@@ -16,10 +16,12 @@ return new class extends Migration
     {
         Schema::create('pets', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::Class);
-            $table->string('name');
-            $table->string('type');
-            $table->string('details');
+            $table->string('pet_name');
+            $table->string('age');
+            $table->string('allergies')->nullable();
+            $table->string('pet_genus');
+            $table->string('pet_species');
+            $table->string('weight');
             $table->timestamps();
         });
     }
