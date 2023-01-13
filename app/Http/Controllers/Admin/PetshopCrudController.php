@@ -110,6 +110,72 @@ class PetshopCrudController extends CrudController
         return Petshop::find($id);
     }
 
+    public function getFormData()
+    {
+        return [
+            [
+                'name' => 'petshop_name',
+                'type' => 'text',
+                'label' => 'Petshop Name',
+                'required' => true,
+            ],
+            [
+                'name' => 'company_name',
+                'type' => 'text',
+                'label' => 'Company Name',
+                'required' => true,
+            ],
+            [
+                'name' => 'owner',
+                'type' => 'text',
+                'label' => 'Owner',
+                'required' => true,
+            ],
+            [
+                'name' => 'phone_number',
+                'type' => 'number',
+                'label' => 'Phone Number',
+                'required' => true,
+            ],
+            [
+                'name' => 'petshop_email',
+                'type' => 'email',
+                'label' => 'Petshop Email',
+                'required' => true,
+            ],
+            [
+                'name' => 'province',
+                'type' => 'dropdown',
+                'label' => 'Province',
+                'required' => true,
+            ],
+            [
+                'name' => 'city',
+                'type' => 'dropdown',
+                'label' => 'City',
+                'required' => true,
+            ],
+            [
+                'name' => 'district',
+                'type' => 'dropdown',
+                'label' => 'district',
+                'required' => true,
+            ],
+            [
+                'name' => 'postal_code',
+                'type' => 'number',
+                'label' => 'Postal Code',
+                'required' => true,
+            ],
+            [
+                'name' => 'petshop_address',
+                'type' => 'text',
+                'label' => 'Petshop Address',
+                'required' => true,
+            ],
+        ];
+    }
+
     protected function create(Request $request){
         $request->validate([
             'petshop_name' => 'required|string|unique:petshops',
