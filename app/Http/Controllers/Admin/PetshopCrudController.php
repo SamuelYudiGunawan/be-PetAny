@@ -144,6 +144,12 @@ class PetshopCrudController extends CrudController
                 'required' => true,
             ],
             [
+                'name' => 'permit',
+                'type' => 'file',
+                'label' => 'Permit',
+                'required' => true,
+            ],
+            [
                 'name' => 'province',
                 'type' => 'dropdown',
                 'label' => 'Province',
