@@ -15,10 +15,6 @@ use App\Http\Controllers\Admin\PetshopCrudController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-    
-Route::get('/hello', function () {
-    
-});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
