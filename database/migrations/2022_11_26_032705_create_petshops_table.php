@@ -17,8 +17,18 @@ return new class extends Migration
     {
         Schema::create('petshops', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::Class);
-            $table->foreignIdFor(Product::Class);
+            // $table->foreignIdFor(User::Class);
+            // $table->foreignIdFor(Product::Class);
+            $table->string('petshop_name');
+            $table->string('company_name');
+            $table->string('owner');
+            $table->string('phone_number');
+            $table->string('petshop_email');
+            $table->string('permit');
+            $table->string('province');
+            $table->string('city');
+            $table->string('district');
+            $table->string('postal_code');
             $table->string('petshop_address');
             $table->timestamps();
         });

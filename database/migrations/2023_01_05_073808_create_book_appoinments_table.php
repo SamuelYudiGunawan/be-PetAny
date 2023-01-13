@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('book_appoinments', function (Blueprint $table) {
             $table->id();
+            $table->string('doctor');
+            $table->date('date');
+            $table->string('pets');
+            $table->string('complaint');
             $table->timestamps();
         });
     }

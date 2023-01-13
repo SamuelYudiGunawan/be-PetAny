@@ -22,7 +22,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'phone_number' => $request->phone_number,
         ]);
 
@@ -31,7 +31,7 @@ class UserController extends Controller
         return response()->json([
             'data' => $user,
             'access_token' => $token,
-            'token_type' => 'Baerer'
+            'token_type' => 'Bearer'
         ]);
     }
 
@@ -42,13 +42,19 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        if (
-            !Auth::attempt(
-                $request->only('email', 'password')
-            )
-        ) {
-            return response()
-                ->json(['massage' => 'Try to check email and password'], 401);
+        // if (
+        //     !Auth::attempt(
+        //         $request->only(['email', 'password']),
+        //     )
+        // ) {
+        //     return response()
+        //         ->json(['massage' => 'Try to check email and password'], 401);
+        // }
+        if (!Auth::attempt($request->only(['email', 'password']))) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Email or Password does not match.',
+            ],);
         }
 
         $user = User::where('email', $request->email)->firstOrFail();
@@ -58,7 +64,7 @@ class UserController extends Controller
         return response()->json([
             'data' => $user,
             'access_token' => $token,
-            'token_type' => 'Baerer'
+            'token_type' => 'Bearer'
         ]);
     } 
 }
