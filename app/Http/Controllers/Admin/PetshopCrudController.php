@@ -118,7 +118,7 @@ class PetshopCrudController extends CrudController
         ]);
     }
 
-    public function getFormData()
+    public function getPetshopForm()
     {
         return [
             [
@@ -200,9 +200,9 @@ class PetshopCrudController extends CrudController
         ]);
 
         $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->permit) . "." . $request->permit->getClientOriginalExtension();
-            $filePath = "storage/document/document/" . $fileName;
+            $filePath = "storage/document/document/permit/" . $fileName;
             $request->permit->storeAs(
-                "public/document/document",
+                "public/document/document/permit",
                 $fileName
             );
 

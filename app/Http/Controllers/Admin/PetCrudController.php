@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Pet;
 use Illuminate\Http\Request;
+use App\Models\MedicalRecord;
 use Illuminate\Support\Carbon;
 use App\Http\Requests\PetRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -115,6 +116,49 @@ class PetCrudController extends CrudController
             'data' => $pet,
         ]);
     }
+
+    public function getPetForm()
+    {
+        return [
+            [
+                'name' => 'pet_name',
+                'type' => 'text',
+                'label' => 'Pet Name',
+                'required' => true,
+            ],
+            [
+                'name' => 'age',
+                'type' => 'number',
+                'label' => 'Age',
+                'required' => true,
+            ],
+            [
+                'name' => 'allergies',
+                'type' => 'text',
+                'label' => 'Allergies',
+                'required' => true,
+            ],
+            [
+                'name' => 'pet_genus',
+                'type' => 'dropdown',
+                'label' => 'Pet Genus',
+                'required' => true,
+            ],
+            [
+                'name' => 'pet_species',
+                'type' => 'dropdown ',
+                'label' => 'Pet Species',
+                'required' => true,
+            ],
+            [
+                'name' => 'weight',
+                'type' => 'number',
+                'label' => 'Weight',
+                'required' => true,
+            ],
+        ];
+    }
+
     protected function getAllPet(){
         $data = Pet::all();
 
@@ -130,5 +174,86 @@ class PetCrudController extends CrudController
         return response()->json([
             'data' => $data,
         ]);
+    }
+
+    protected function addMedicalRecord(Request $request){
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'treatment' => 'required|string',
+            'date' => 'required|date',
+            'attachment' => 'required|file',
+        ]);
+
+        $pet = MedicalRecord::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'treatment' => $request->treatment,
+            'date' => $request->date,
+            'attachment' => $request->attachment,
+        ]);
+
+        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->attachment) . "." . $request->attachment->getClientOriginalExtension();
+            $filePath = "storage/document/document/attachment/" . $fileName;
+            $request->attachment->storeAs(
+                "public/document/document/attachment",
+                $fileName
+            );
+
+        return response()->json([
+            'data' => $pet,
+        ]);
+    }
+    protected function getAllMedicalRecord(){
+        $data = MedicalRecord::all();
+
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
+    public function getMedicalRecord($id)
+    {
+        $data =  MedicalRecord::find($id);
+        
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
+    public function getMedicalForm()
+    {
+        return [
+            [
+                'name' => 'title',
+                'type' => 'text',
+                'label' => 'Title',
+                'required' => true,
+            ],
+            [
+                'name' => 'description',
+                'type' => 'text',
+                'label' => 'Description',
+                'required' => true,
+            ],
+            [
+                'name' => 'treatment',
+                'type' => 'text',
+                'label' => 'Treatment',
+                'required' => true,
+            ],
+            [
+                'name' => 'date',
+                'type' => 'date_picker',
+                'label' => 'Date',
+                'required' => true,
+            ],
+            [
+                'name' => 'attachment',
+                'type' => 'file',
+                'label' => 'Attachment',
+                'required' => true,
+            ],
+        ];
     }
 }
