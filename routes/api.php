@@ -26,5 +26,6 @@ Route::post('/login', [UserController::class, 'login']);
 
 // PETSHOP
 Route::post('/create-petshop', [PetshopCrudController::class, 'create'])->middleware(['auth:sanctum']);
+Route::get('/petshop-form', [PetshopCrudController::class, 'getFormData']);
 Route::get('/get-petshop', [PetshopCrudController::class, 'getAllPetshop']);
 Route::get('/get-petshop/{id}', [PetshopCrudController::class, 'getPetshop']);
