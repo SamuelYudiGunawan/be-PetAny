@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Petshop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Requests\PetshopRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -123,6 +124,13 @@ class PetshopCrudController extends CrudController
             'postal_code' => 'required|string',
             'petshop_address' => 'required|string',
         ]);
+
+        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->permit) . "." . $request->permit->getClientOriginalExtension();
+            $filePath = "storage/document/document/" . $fileName;
+            $request->permit->storeAs(
+                "public/document/document",
+                $fileName
+            );
 
         $petshop = Petshop::create([
             'petshop_name' => $request->petshop_name,
