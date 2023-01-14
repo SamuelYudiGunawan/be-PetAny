@@ -205,12 +205,12 @@ class PetshopCrudController extends CrudController
             'petshop_address' => 'required|string',
         ]);
 
-        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->permit) . "." . $request->permit->getClientOriginalExtension();
-            $filePath = "storage/document/document/permit/" . $fileName;
-            $request->permit->storeAs(
-                "public/document/document/permit",
-                $fileName
-            );
+        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('permit')) . "." . $request->file('permit')->getClientOriginalExtension();
+        $filePath = "storage/document/permit/" . $fileName;
+        $request->permit->storeAs(
+            "public/document/permit",
+            $fileName
+        );
 
         $petshop = Petshop::create([
             'petshop_name' => $request->petshop_name,
@@ -219,7 +219,7 @@ class PetshopCrudController extends CrudController
             'district' => $request->district,
             'phone_number' => $request->phone_number,
             'petshop_email' => $request->petshop_email,
-            'permit' => $request->permit,
+            'permit' => url('/').'/'.$filePath,
             'province' => $request->province,
             'city' => $request->city,
             'postal_code' => $request->postal_code,
