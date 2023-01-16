@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\MedicalRecord;
 use Illuminate\Support\Carbon;
 use App\Http\Requests\PetRequest;
+use Illuminate\Support\Facades\Log;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -103,6 +104,7 @@ class PetCrudController extends CrudController
             'weight' => 'required|int',
         ]);
 
+        try {
         $pet = Pet::create([
             'pet_name' => $request->pet_name,
             'age' => $request->age,
@@ -111,10 +113,15 @@ class PetCrudController extends CrudController
             'pet_species' => $request->pet_species,
             'weight' => $request->weight,
         ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
 
         return response()->json([
             'data' => $pet,
         ]);
+    
+
     }
 
     public function getPetForm()
