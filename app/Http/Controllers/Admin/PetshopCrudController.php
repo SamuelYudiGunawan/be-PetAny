@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Petshop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\PetshopRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -205,6 +206,7 @@ class PetshopCrudController extends CrudController
             'petshop_address' => 'required|string',
         ]);
 
+        try{
         $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('permit')) . "." . $request->file('permit')->getClientOriginalExtension();
         $filePath = "storage/document/permit/" . $fileName;
         $request->permit->storeAs(
@@ -225,6 +227,9 @@ class PetshopCrudController extends CrudController
             'postal_code' => $request->postal_code,
             'petshop_address' => $request->petshop_address,
         ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
 
         return response()->json([
             'data' => $petshop,

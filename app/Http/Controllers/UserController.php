@@ -42,14 +42,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        // if (
-        //     !Auth::attempt(
-        //         $request->only(['email', 'password']),
-        //     )
-        // ) {
-        //     return response()
-        //         ->json(['massage' => 'Try to check email and password'], 401);
-        // }
+        try{
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return response()->json([
                 'status' => false,
@@ -60,7 +53,11 @@ class UserController extends Controller
         $user = User::where('email', $request->email)->firstOrFail();
 
         $token = $user->createToken('Token-Register')->plainTextToken;
-
+        
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
+        
         return response()->json([
             'data' => $user,
             'access_token' => $token,
