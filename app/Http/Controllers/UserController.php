@@ -19,6 +19,7 @@ class UserController extends Controller
             'phone_number' => 'required|string|min:10',
         ]);
 
+        try{
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -27,6 +28,9 @@ class UserController extends Controller
         ]);
 
         $token = $user->createToken('Token-Register')->plainTextToken;
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
 
         return response()->json([
             'data' => $user,
@@ -57,7 +61,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
-        
+
         return response()->json([
             'data' => $user,
             'access_token' => $token,
