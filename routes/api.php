@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\API\PetController;
+use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\PetshopController;
 use App\Http\Controllers\Admin\PetCrudController;
 use App\Http\Controllers\Admin\PetshopCrudController;
 
@@ -26,19 +28,19 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
 // PETSHOP
-Route::post('/create-petshop', [PetshopCrudController::class, 'create'])->middleware(['auth:sanctum']);
-Route::get('/get-petshop', [PetshopCrudController::class, 'getAllPetshop']);
-Route::get('/get-petshop/{id}', [PetshopCrudController::class, 'getPetshop']);
-Route::get('/petshop-form', [PetshopCrudController::class, 'getPetshopForm']);
+Route::post('/create-petshop', [PetshopController::class, 'create'])->middleware(['auth:sanctum']);
+Route::get('/get-petshop', [PetshopController::class, 'getAllPetshop']);
+Route::get('/get-petshop/{id}', [PetshopController::class, 'getPetshop']);
+Route::get('/petshop-form', [PetshopController::class, 'getPetshopForm']);
 
 //PET
-Route::post('/add-pet', [PetCrudController::class, 'addPet'])->middleware(['auth:sanctum']);
-Route::get('/get-pet', [PetCrudController::class, 'getAllPet'])->middleware(['auth:sanctum']);
-Route::get('/get-pet/{id}', [PetCrudController::class, 'getPet'])->middleware(['auth:sanctum']);
-Route::get('/pet-form', [PetCrudController::class, 'getPetForm']);
+Route::post('/add-pet', [PetController::class, 'addPet'])->middleware(['auth:sanctum']);
+Route::get('/get-pet', [PetController::class, 'getAllPet'])->middleware(['auth:sanctum']);
+Route::get('/get-pet/{id}', [PetController::class, 'getPet'])->middleware(['auth:sanctum']);
+Route::get('/pet-form', [PetController::class, 'getPetForm']);
 
 //MEDICAL RECORD
-Route::post('/add-medicalrecord', [PetCrudController::class, 'addMedicalRecord'])->middleware(['auth:sanctum']);
-Route::get('/get-medicalrecord', [PetCrudController::class, 'getAllMedicalRecord'])->middleware(['auth:sanctum']);
-Route::get('/get-medicalrecord/{id}', [PetCrudController::class, 'getMedicalRecord'])->middleware(['auth:sanctum']);
-Route::get('/medicalrecord-form', [PetCrudController::class, 'getMedicalForm']);
+Route::post('/add-medicalrecord', [PetController::class, 'addMedicalRecord'])->middleware(['auth:sanctum']);
+Route::get('/get-medicalrecord', [PetController::class, 'getAllMedicalRecord'])->middleware(['auth:sanctum']);
+Route::get('/get-medicalrecord/{id}', [PetController::class, 'getMedicalRecord'])->middleware(['auth:sanctum']);
+Route::get('/medicalrecord-form', [PetController::class, 'getMedicalForm']);
