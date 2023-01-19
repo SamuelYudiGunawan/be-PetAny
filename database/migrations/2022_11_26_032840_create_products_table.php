@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Petshop;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Petshop::Class);
+            $table->foreignId('petshop_id')->constrained('petshops');
             $table->string('name');
             $table->string('description');
             $table->string('image');

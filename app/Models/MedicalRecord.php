@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Pet;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MedicalRecord extends Model
 {
@@ -19,5 +20,11 @@ class MedicalRecord extends Model
         'treatment',
         'date',
         'attachment',
+        'pet_id',
     ];
+    
+    public function pet_id()
+    {
+        return $this->belongsTo(Pet::class, 'pet_id');
+    }
 }
