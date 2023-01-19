@@ -2,25 +2,29 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\User;
 use App\Models\Petshop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class PetshopController extends Controller
 {
     public function getAllPetshop(){
-        $data = Petshop::all();
+        $data = Petshop::with('user_id')->get();
+        // $user = User::with('petshop')->where('id',1)->first();
 
         return response()->json([
             'data' => $data,
+            // 'user' => $user,
         ]);
     }
 
     public function getPetshop($id)
     {
-        $data =  Petshop::find($id);
+        $data = Petshop::with('user_id')->find($id);
         
         return response()->json([
             'data' => $data,
@@ -103,7 +107,6 @@ class PetshopController extends Controller
         $request->validate([
             'petshop_name' => 'required|string|unique:petshops',
             'company_name' => 'required|string|unique:petshops',
-            'owner' => 'required|string',
             'phone_number' => 'required|string',
             'petshop_email' => 'required|email|string|unique:petshops',
             'permit' => 'required|file|mimes:pdf',
@@ -123,9 +126,9 @@ class PetshopController extends Controller
         );
 
         $petshop = Petshop::create([
+            'user_id' => Auth::user()->id,
             'petshop_name' => $request->petshop_name,
             'company_name' => $request->company_name,
-            'owner' => $request->owner,
             'district' => $request->district,
             'phone_number' => $request->phone_number,
             'petshop_email' => $request->petshop_email,

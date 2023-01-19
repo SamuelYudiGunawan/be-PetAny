@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // AUTH
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
+// ->middleware('verified');
 
 // PETSHOP
 Route::post('/create-petshop', [PetshopController::class, 'create'])->middleware(['auth:sanctum']);

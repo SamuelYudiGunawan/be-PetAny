@@ -8,6 +8,7 @@ use App\Models\MedicalRecord;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 
 class PetController extends Controller
@@ -23,6 +24,7 @@ class PetController extends Controller
 
         try {
         $pet = Pet::create([
+            'user_id' => Auth::user()->id,
             'pet_name' => $request->pet_name,
             'age' => $request->age,
             'allergies' => $request->allergies,
@@ -84,8 +86,12 @@ class PetController extends Controller
     }
 
     public function getAllPet(){
-        $data = Pet::all();
-
+        try{
+            $data = Pet::with('user_id')->get();
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
+        
         return response()->json([
             'data' => $data,
         ]);
@@ -93,7 +99,11 @@ class PetController extends Controller
 
     public function getPet($id)
     {
-        $data =  Pet::find($id);
+        try{
+            $data = Pet::with('user_id')->find($id);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
         
         return response()->json([
             'data' => $data,
@@ -107,30 +117,43 @@ class PetController extends Controller
             'treatment' => 'required|string',
             'date' => 'required|date',
             'attachment' => 'required|file',
+            'pet_id' => 'required|string'
         ]);
 
-        $pet = MedicalRecord::create([
+        try{
+        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('attachment')) . "." . $request->file('attachment')->getClientOriginalExtension();
+        $filePath = "storage/document/attachment/" . $fileName;
+        $request->attachment->storeAs(
+            "public/document/attachment",
+            $fileName
+        );
+
+        $medical_record = MedicalRecord::create([
             'title' => $request->title,
             'description' => $request->description,
             'treatment' => $request->treatment,
             'date' => $request->date,
-            'attachment' => $request->attachment,
+            'attachment' => url('/').'/'.$filePath,
+            'pet_id' => $request->pet_id,
         ]);
 
-        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->attachment) . "." . $request->attachment->getClientOriginalExtension();
-            $filePath = "storage/document/document/attachment/" . $fileName;
-            $request->attachment->storeAs(
-                "public/document/document/attachment",
-                $fileName
-            );
+        
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
 
         return response()->json([
-            'data' => $pet,
+            'data' => $medical_record,
         ]);
     }
     protected function getAllMedicalRecord(){
-        $data = MedicalRecord::all();
-
+        try{
+            // $data = MedicalRecord::all();
+            $data = MedicalRecord::with('pet_id')->get();
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
+        
         return response()->json([
             'data' => $data,
         ]);
@@ -138,7 +161,12 @@ class PetController extends Controller
 
     public function getMedicalRecord($id)
     {
-        $data =  MedicalRecord::find($id);
+        try{
+            // $data = MedicalRecord::find($id);
+            $data = MedicalRecord::with('pet_id')->find($id);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
         
         return response()->json([
             'data' => $data,

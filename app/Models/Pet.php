@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use App\Models\User;
+use App\Models\MedicalRecord;
 use Illuminate\Database\Eloquent\Model;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 
 class Pet extends Model
 {
@@ -26,6 +28,7 @@ class Pet extends Model
         'pet_genus',
         'pet_species',
         'weight',
+        'user_id',
     ];
     // protected $hidden = [];
     // protected $dates = [];
@@ -41,6 +44,16 @@ class Pet extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+
+    public function user_id()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function medical_record()
+    {
+        return $this->hasMany(MedicalRecord::class);
+    }
 
     /*
     |--------------------------------------------------------------------------
