@@ -87,7 +87,7 @@ class PetController extends Controller
 
     public function getAllPet(){
         try{
-            $data = Pet::with('user_id')->get();
+            $data = Pet::with('user_id:id,name')->get();
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
@@ -100,7 +100,7 @@ class PetController extends Controller
     public function getPet($id)
     {
         try{
-            $data = Pet::with('user_id')->find($id);
+            $data = Pet::with('user_id:id,name')->find($id);
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
@@ -149,7 +149,7 @@ class PetController extends Controller
     protected function getAllMedicalRecord(){
         try{
             // $data = MedicalRecord::all();
-            $data = MedicalRecord::with('pet_id')->get();
+            $data = MedicalRecord::with('pet_id:id,pet_name')->get();
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
@@ -163,7 +163,7 @@ class PetController extends Controller
     {
         try{
             // $data = MedicalRecord::find($id);
-            $data = MedicalRecord::with('pet_id')->find($id);
+            $data = MedicalRecord::with('pet_id:id,pet_name')->find($id);
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }

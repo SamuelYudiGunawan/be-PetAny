@@ -12,7 +12,6 @@ class Petshop extends Model
     use HasFactory;
     protected $table = 'petshops';
     protected $fillable = [
-        'user_id',
         'petshop_name',
         'company_name',
         'phone_number',
@@ -23,6 +22,7 @@ class Petshop extends Model
         'district',
         'postal_code',
         'petshop_address',
+        'user_id',
     ];
     public function user_id()
     {
