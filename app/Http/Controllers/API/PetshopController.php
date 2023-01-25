@@ -13,18 +13,17 @@ use Illuminate\Support\Facades\Auth;
 class PetshopController extends Controller
 {
     public function getAllPetshop(){
-        $data = Petshop::with('user_id')->get();
-        // $user = User::with('petshop')->where('id',1)->first();
+        $data = Petshop::with('user_id:id,name')->get();
 
         return response()->json([
             'data' => $data,
-            // 'user' => $user,
         ]);
     }
 
     public function getPetshop($id)
     {
-        $data = Petshop::with('user_id')->find($id);
+        $data = Petshop::with('user_id:id,name')->find($id);
+        
         
         return response()->json([
             'data' => $data,
@@ -126,7 +125,6 @@ class PetshopController extends Controller
         );
 
         $petshop = Petshop::create([
-            'user_id' => Auth::user()->id,
             'petshop_name' => $request->petshop_name,
             'company_name' => $request->company_name,
             'district' => $request->district,
@@ -137,6 +135,7 @@ class PetshopController extends Controller
             'city' => $request->city,
             'postal_code' => $request->postal_code,
             'petshop_address' => $request->petshop_address,
+            'user_id' => Auth::user()->id,
         ]);
         } catch (\Exception $e) {
         Log::error($e->getMessage());
