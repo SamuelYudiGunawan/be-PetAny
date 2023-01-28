@@ -7,6 +7,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\PetshopController;
 use App\Http\Controllers\Admin\PetCrudController;
 use App\Http\Controllers\Admin\PetshopCrudController;
+use App\Http\Controllers\API\BookAppoinmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,3 +46,9 @@ Route::post('/add-medicalrecord', [PetController::class, 'addMedicalRecord'])->m
 Route::get('/get-medicalrecord', [PetController::class, 'getAllMedicalRecord'])->middleware(['auth:sanctum']);
 Route::get('/get-medicalrecord/{id}', [PetController::class, 'getMedicalRecord'])->middleware(['auth:sanctum']);
 Route::get('/medicalrecord-form', [PetController::class, 'getMedicalForm']);
+
+//BOOK APPOINMENT
+Route::post('/add-bookappoinment', [BookAppoinmentController::class, 'addBookAppoinment'])->middleware(['auth:sanctum']);
+Route::get('/get-bookappoinment', [BookAppoinmentController::class, 'getAllBookAppoinment'])->middleware(['auth:sanctum']);
+Route::get('/get-bookappoinment/{id}', [BookAppoinmentController::class, 'getBookAppoinment'])->middleware(['auth:sanctum']);
+Route::get('/bookappoinment-form', [BookAppoinmentController::class, 'getBookAppoinmentForm']);
