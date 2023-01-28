@@ -2,11 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BookAppoinment extends Model
 {
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'doctor',
+        'date',
+        'pets',
+        'complaint',
+    ];
+    public function user_id()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

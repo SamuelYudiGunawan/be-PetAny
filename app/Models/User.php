@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Pet;
+use App\Models\BookAppoinment;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -59,5 +60,9 @@ class User extends Authenticatable
     public function pet()
     {
         return $this->hasMany(Pet::class);
+    }
+    public function bookappoinment()
+    {
+        return $this->hasMany(BookAppoinment::class);
     }
 }
