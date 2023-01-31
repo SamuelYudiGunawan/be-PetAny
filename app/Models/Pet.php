@@ -23,6 +23,7 @@ class Pet extends Model
     protected $guarded = ['id'];
     protected $fillable = [
         'pet_name',
+        'pet_image',
         'age',
         'allergies',
         'pet_genus',

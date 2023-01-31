@@ -13,6 +13,7 @@ class Petshop extends Model
     protected $table = 'petshops';
     protected $fillable = [
         'petshop_name',
+        'petshop_image',
         'company_name',
         'phone_number',
         'petshop_email',

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->string('petshop_name');
+            $table->string('petshop_image');
             $table->string('company_name');
             $table->string('phone_number');
             $table->string('petshop_email');

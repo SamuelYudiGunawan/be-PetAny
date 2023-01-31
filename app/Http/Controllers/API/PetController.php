@@ -16,6 +16,7 @@ class PetController extends Controller
     public function addPet(Request $request){
         $request->validate([
             'pet_name' => 'required|string',
+            'pet_image' => 'required|file|mimes:png,jpg',
             'age' => 'required|int',
             'pet_genus' => 'required|string',
             'pet_species' => 'required|string',
@@ -23,9 +24,18 @@ class PetController extends Controller
         ]);
 
         try {
+
+        $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('pet_image')) . "." . $request->file('pet_image')->getClientOriginalExtension();
+        $imagePath = "storage/document/pet_image/" . $imageName;
+        $request->pet_image->storeAs(
+            "public/document/pet_image",
+            $imageName
+        );
+
         $pet = Pet::create([
             'user_id' => Auth::user()->id,
             'pet_name' => $request->pet_name,
+            'pet_image' => url('/').'/'.$imagePath,
             'age' => $request->age,
             'allergies' => $request->allergies,
             'pet_genus' => $request->pet_genus,
@@ -127,6 +137,7 @@ class PetController extends Controller
             "public/document/attachment",
             $fileName
         );
+
 
         $medical_record = MedicalRecord::create([
             'title' => $request->title,

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->string('pet_name');
+            $table->string('pet_image');
             $table->string('age');
             $table->string('allergies')->nullable();
             $table->string('pet_genus');
