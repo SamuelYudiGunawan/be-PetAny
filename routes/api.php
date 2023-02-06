@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\PetController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\PetshopController;
+use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\Admin\PetCrudController;
 use App\Http\Controllers\Admin\PetshopCrudController;
 use App\Http\Controllers\API\BookAppoinmentController;
@@ -52,3 +53,9 @@ Route::post('/add-bookappoinment', [BookAppoinmentController::class, 'addBookApp
 Route::get('/get-bookappoinment', [BookAppoinmentController::class, 'getAllBookAppoinment'])->middleware(['auth:sanctum']);
 Route::get('/get-bookappoinment/{id}', [BookAppoinmentController::class, 'getBookAppoinment'])->middleware(['auth:sanctum']);
 Route::get('/bookappoinment-form', [BookAppoinmentController::class, 'getBookAppoinmentForm']);
+
+//PRODUCT
+Route::post('/add-product', [ProductController::class, 'addProduct'])->middleware(['auth:sanctum']);
+Route::get('/get-product', [ProductController::class, 'getAllProduct'])->middleware(['auth:sanctum']);
+Route::get('/get-product/{id}', [ProductController::class, 'getBProduct'])->middleware(['auth:sanctum']);
+Route::get('/product-form', [ProductController::class, 'getProductForm']);
