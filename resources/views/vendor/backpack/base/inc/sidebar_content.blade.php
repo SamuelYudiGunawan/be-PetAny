@@ -3,6 +3,8 @@
 
 <li class="nav-item"><a class="nav-link" href="{{ backpack_url('petshop') }}"><i class="nav-icon la la-th-list"></i> Petshops</a></li>
 <li class="nav-item"><a class="nav-link" href="{{ backpack_url('book-appoinment') }}"><i class="nav-icon la la-th-list"></i> Book appoinments</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ backpack_url('pet') }}"><i class="nav-icon la la-th-list"></i> Pets</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ backpack_url('product') }}"><i class="nav-icon la la-th-list"></i> Products</a></li>
 
 <!-- Users, Roles, Permissions -->
 <li class="nav-item nav-dropdown">
@@ -13,4 +15,3 @@
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('permission') }}"><i class="nav-icon la la-key"></i> <span>Permissions</span></a></li>
     </ul>
 </li>
-<li class="nav-item"><a class="nav-link" href="{{ backpack_url('pet') }}"><i class="nav-icon la la-th-list"></i> Pets</a></li>
