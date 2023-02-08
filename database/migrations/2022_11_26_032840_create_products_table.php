@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('price');
             $table->string('location');
             $table->string('category');
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }
