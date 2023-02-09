@@ -97,13 +97,29 @@ class PetController extends Controller
 
     public function getAllPet(){
         try{
-            $data = Pet::with('user_id:id,name')->get();
+            $data = Pet::with('user_id:id,name')->where('user_id', Auth::user()->id)->get();
+            $response = [];
+            foreach ($data as $d) {
+                array_push($response, [
+                    'user_id' => $d->user_id,
+                    'pet_name' => $d->pet_name,
+                    'pet_image' => $d->pet_image,
+                    'age' => $d->age,
+                    'allergies' => $d->allergies,
+                    'pet_genus' => $d->pet_genus,
+                    'pet_species' => $d->pet_species,
+                    'weight' => $d->weight,
+                    'links' => [
+                        'self' => '/api/get-pet/' . $d->id,
+                    ],
+                ]);
+            }
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
         
         return response()->json([
-            'data' => $data,
+            $response
         ]);
     }
 
