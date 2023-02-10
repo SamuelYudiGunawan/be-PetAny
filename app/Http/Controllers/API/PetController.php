@@ -101,6 +101,7 @@ class PetController extends Controller
             $response = [];
             foreach ($data as $d) {
                 array_push($response, [
+                    'id' => $d->id,
                     'user_id' => $d->user_id,
                     'pet_name' => $d->pet_name,
                     'pet_image' => $d->pet_image,
@@ -125,15 +126,52 @@ class PetController extends Controller
 
     public function getPet($id)
     {
+        // try{
+        //     $data = Pet::with('user_id:id,name')->find($id);
+        // } catch (\Exception $e) {
+        // Log::error($e->getMessage());
+        // }
+        
+        // return response()->json([
+        //     'data' => $data,
+        // ]);
         try{
-            $data = Pet::with('user_id:id,name')->find($id);
+            $d = Pet::with('user_id:id,name')->find($id)->first();
+                    return response()->json([
+                    'id' => $d->id,
+                    'user_id' => $d->user_id,
+                    'pet_name' => $d->pet_name,
+                    'pet_image' => $d->pet_image,
+                    'age' => $d->age,
+                    'allergies' => $d->allergies,
+                    'pet_genus' => $d->pet_genus,
+                    'pet_species' => $d->pet_species,
+                    'weight' => $d->weight,
+                    'links' => [
+                        'add_medical_record' => 'api/add-medicalrecord?pet_id=' . $d->id, 
+                    ],
+                ]);
+            // return $data;
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
         
         return response()->json([
-            'data' => $data,
+            $response
         ]);
+    }
+
+    public function deletePet($id) {
+        try{
+            $pet = Pet::where('id', $id)->first();
+            if(!$pet) { 
+                return response()->json(['message' => 'Pet not found']); 
+            }
+            $pet->delete();
+            return response()->json(['message' => 'Pet deleted']); 
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
     }
 
     public function addMedicalRecord(Request $request){
@@ -198,6 +236,19 @@ class PetController extends Controller
         return response()->json([
             'data' => $data,
         ]);
+    }
+
+    public function deleteMedicalRecord($id) {
+        try{
+        $medical_record = MedicalRecord::where('id', $id)->first();
+        if(!$medical_record) { 
+            return response()->json(['message' => 'Medical record not found']); 
+        }
+        $medical_record->delete();
+        return response()->json(['message' => 'Medical record deleted']); 
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
     }
 
     public function getMedicalForm()
