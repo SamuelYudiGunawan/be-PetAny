@@ -51,14 +51,39 @@ class ProductController extends Controller
     
     }
     public function getAllProduct(){
+        // try{
+        //     $data = Product::with('user_id:id,name')->get();
+        // } catch (\Exception $e) {
+        // Log::error($e->getMessage());
+        // }
+        
+        // return response()->json([
+        //     'data' => $data,
+        // ]);
         try{
-            $data = Product::with('user_id:id,name')->get();
+            $data = Product::with('user_id:id,name')->where('user_id', Auth::user()->id)->get();
+            $response = [];
+            foreach ($data as $d) {
+                array_push($response, [
+                    'petshop_id' => $d->petshop_id,
+                    'name' => $d->name,
+                    'description' => $d->description,
+                    'image' => $d->image,
+                    'stock' => $d->stock,
+                    'price' => $d->price,
+                    'location' => $d->location,
+                    'category' => $d->category,
+                    'links' => [
+                        'self' => '/api/get-medicalrecord/' . $d->id,
+                    ],
+                ]);
+            }
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
         
         return response()->json([
-            'data' => $data,
+            $response
         ]);
     }
 

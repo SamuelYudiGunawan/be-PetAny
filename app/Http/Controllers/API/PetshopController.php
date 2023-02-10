@@ -12,11 +12,88 @@ use Illuminate\Support\Facades\Auth;
 
 class PetshopController extends Controller
 {
-    public function getAllPetshop(){
-        $data = Petshop::with('user_id:id,name')->get();
+    public function create(Request $request){
+        $request->validate([
+            'petshop_name' => 'required|string|unique:petshops',
+            'petshop_image' => 'required|file|mimes:png,jpg',
+            'company_name' => 'required|string|unique:petshops',
+            'phone_number' => 'required|string',
+            'petshop_email' => 'required|email|string|unique:petshops',
+            'permit' => 'required|file|mimes:pdf',
+            'province' => 'required|string',
+            'city' => 'required|string',
+            'district' => 'required|string',
+            'postal_code' => 'required|string',
+            'petshop_address' => 'required|string',
+        ]);
+
+        try{
+        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('permit')) . "." . $request->file('permit')->getClientOriginalExtension();
+        $filePath = "storage/document/permit/" . $fileName;
+        $request->permit->storeAs(
+            "public/document/permit",
+            $fileName
+        );
+        $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('petshop_image')) . "." . $request->file('petshop_image')->getClientOriginalExtension();
+        $imagePath = "storage/document/petshop_image/" . $imageName;
+        $request->petshop_image->storeAs(
+            "public/document/petshop_image",
+            $imageName
+        );
+
+        $petshop = Petshop::create([
+            'petshop_name' => $request->petshop_name,
+            'petshop_image' => url('/').'/'.$imagePath,
+            'company_name' => $request->company_name,
+            'district' => $request->district,
+            'phone_number' => $request->phone_number,
+            'petshop_email' => $request->petshop_email,
+            'permit' => url('/').'/'.$filePath,
+            'province' => $request->province,
+            'city' => $request->city,
+            'postal_code' => $request->postal_code,
+            'petshop_address' => $request->petshop_address,
+            'user_id' => Auth::user()->id,
+        ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
 
         return response()->json([
-            'data' => $data,
+            'data' => $petshop,
+        ]);
+    }
+
+    public function getAllPetshop(){
+        try{
+            $data = Petshop::with('user_id:id,name')->get();
+            // dd($data);
+            $response = [];
+            foreach ($data as $d) {
+                array_push($response, [
+                    'petshop_name' => $d->petshop_name,
+                    'user_id' => $d->user_id,
+                    'petshop_image' => $d->petshop_image,
+                    'company_name' => $d->company_name,
+                    'district' => $d->district,
+                    'phone_number' => $d->phone_number,
+                    'petshop_email' => $d->petshop_email,
+                    'permit' => $d->permit,
+                    'province' => $d->province,
+                    'city' => $d->city,
+                    'postal_code' => $d->postal_code,
+                    'petshop_address' => $d->petshop_address,
+                    'links' => [
+                        'self' => '/api/get-petshop/' . $d->id,
+                    ],
+                ]);
+            }
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
+        
+        return response()->json([
+            $response
         ]);
     }
 
@@ -100,57 +177,5 @@ class PetshopController extends Controller
                 'required' => true,
             ],
         ];
-    }
-
-    public function create(Request $request){
-        $request->validate([
-            'petshop_name' => 'required|string|unique:petshops',
-            'petshop_image' => 'required|file|mimes:png,jpg',
-            'company_name' => 'required|string|unique:petshops',
-            'phone_number' => 'required|string',
-            'petshop_email' => 'required|email|string|unique:petshops',
-            'permit' => 'required|file|mimes:pdf',
-            'province' => 'required|string',
-            'city' => 'required|string',
-            'district' => 'required|string',
-            'postal_code' => 'required|string',
-            'petshop_address' => 'required|string',
-        ]);
-
-        try{
-        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('permit')) . "." . $request->file('permit')->getClientOriginalExtension();
-        $filePath = "storage/document/permit/" . $fileName;
-        $request->permit->storeAs(
-            "public/document/permit",
-            $fileName
-        );
-        $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('petshop_image')) . "." . $request->file('petshop_image')->getClientOriginalExtension();
-        $imagePath = "storage/document/petshop_image/" . $imageName;
-        $request->petshop_image->storeAs(
-            "public/document/petshop_image",
-            $imageName
-        );
-
-        $petshop = Petshop::create([
-            'petshop_name' => $request->petshop_name,
-            'petshop_image' => url('/').'/'.$imagePath,
-            'company_name' => $request->company_name,
-            'district' => $request->district,
-            'phone_number' => $request->phone_number,
-            'petshop_email' => $request->petshop_email,
-            'permit' => url('/').'/'.$filePath,
-            'province' => $request->province,
-            'city' => $request->city,
-            'postal_code' => $request->postal_code,
-            'petshop_address' => $request->petshop_address,
-            'user_id' => Auth::user()->id,
-        ]);
-        } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        }
-
-        return response()->json([
-            'data' => $petshop,
-        ]);
     }
 }
