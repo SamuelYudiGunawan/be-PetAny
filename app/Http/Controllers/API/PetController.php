@@ -213,14 +213,27 @@ class PetController extends Controller
     }
     protected function getAllMedicalRecord(){
         try{
-            // $data = MedicalRecord::all();
             $data = MedicalRecord::with('pet_id:id,pet_name')->get();
+            $response = [];
+            foreach ($data as $d) {
+                array_push($response, [
+                    'title' => $d->title,
+                    'description' => $d->description,
+                    'treatment' => $d->treatment,
+                    'date' => $d->date,
+                    'attachment' => $d->attachment,
+                    'pet_id' => $d->pet_id,
+                    'links' => [
+                        'self' => '/api/get-medicalrecord/' . $d->id,
+                    ],
+                ]);
+            }
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
         
         return response()->json([
-            'data' => $data,
+            $response
         ]);
     }
 
