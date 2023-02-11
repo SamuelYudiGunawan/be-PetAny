@@ -9,14 +9,5 @@ class Product extends Model
 {
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
-    protected $fillable = [
-        'petshop_id',
-        'name',
-        'description',
-        'image',
-        'stock',
-        'price',
-        'location',
-        'category',
-    ];
+    protected $guarded = ['id'];
 }

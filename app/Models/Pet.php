@@ -21,16 +21,6 @@ class Pet extends Model
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
-    protected $fillable = [
-        'pet_name',
-        'pet_image',
-        'age',
-        'allergies',
-        'pet_genus',
-        'pet_species',
-        'weight',
-        'user_id',
-    ];
     // protected $hidden = [];
     // protected $dates = [];
 

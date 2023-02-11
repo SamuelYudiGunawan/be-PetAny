@@ -14,14 +14,6 @@ class MedicalRecord extends Model
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
-    protected $fillable = [
-        'title',
-        'description',
-        'treatment',
-        'date',
-        'attachment',
-        'pet_id',
-    ];
     
     public function pet_id()
     {
