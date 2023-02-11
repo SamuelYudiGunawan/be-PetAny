@@ -97,4 +97,36 @@ class BookAppoinmentController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function acceptBookAppoinment($id){
+        try {
+        $book_appoinment = BookAppoinment::find($id)->update([
+            'status' => 'accepted',
+        ]);
+        return response()->json([
+            'message' => 'Book Appoinment Approved',
+        ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return response()->json([
+            'message' => $e->getMessage(),
+        ]);
+        }
+    }
+
+    public function rejectBookAppoinment($id){
+        try {
+        $book_appoinment = BookAppoinment::find($id)->update([
+            'status' => 'rejected',
+        ]);
+        return response()->json([
+            'message' => 'Book Appoinment Approved',
+        ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return response()->json([
+            'message' => $e->getMessage(),
+        ]);
+        }
+    }
 }

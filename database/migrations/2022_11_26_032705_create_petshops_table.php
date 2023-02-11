@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('district');
             $table->string('postal_code');
             $table->string('petshop_address');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

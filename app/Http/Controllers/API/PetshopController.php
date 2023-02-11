@@ -67,7 +67,6 @@ class PetshopController extends Controller
     public function getAllPetshop(){
         try{
             $data = Petshop::with('user_id:id,name')->get();
-            // dd($data);
             $response = [];
             foreach ($data as $d) {
                 array_push($response, [
