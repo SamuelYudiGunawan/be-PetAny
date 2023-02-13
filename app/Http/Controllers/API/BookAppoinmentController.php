@@ -120,7 +120,7 @@ class BookAppoinmentController extends Controller
             'status' => 'rejected',
         ]);
         return response()->json([
-            'message' => 'Book Appoinment Approved',
+            'message' => 'Book Appoinment Rejected',
         ]);
         } catch (\Exception $e) {
         Log::error($e->getMessage());

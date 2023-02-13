@@ -21,4 +21,9 @@ Route::group([
     Route::crud('user', 'UserCrudController');
     Route::crud('pet', 'PetCrudController');
     Route::crud('product', 'ProductCrudController');
+
+    //REGISTER PETSHOP STATUS
+    Route::post('get_petshop_list', 'PetshopCrudController@getPetshopList');
+    Route::post('accept_petshop', 'PetshopCrudController@acceptPetshop');
+    Route::post('reject_petshop', 'PetshopCrudController@rejectPetshop');
 }); // this should be the absolute last line of this file
