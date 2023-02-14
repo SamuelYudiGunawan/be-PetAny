@@ -151,14 +151,13 @@ class PetController extends Controller
                         'add_medical_record' => 'api/add-medicalrecord?pet_id=' . $d->id, 
                     ],
                 ]);
+        return response()->json([
+            $response
+        ]);
             // return $data;
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
-        
-        return response()->json([
-            $response
-        ]);
     }
 
     public function deletePet($id) {
