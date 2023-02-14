@@ -16,4 +16,8 @@ class Petshop extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function scopeStatus($query, $value)
+    {
+        return $query->where('status', $value);
+    }
 }

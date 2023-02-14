@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Models\Petshop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -109,15 +110,17 @@ class PetshopCrudController extends CrudController
         try{
             $status = $request->status;
             
-            $petshop = Petshop::with('user_id:id,name')->get();
+            $petshop = Petshop::with('user_id:id,name');
 
-            if ($status == 'open') {
-                $petshop = $petshop->open()->latest()->get();
+            if ($status == 'pending') {
+                $petshop = $petshop->status('pending')->latest();
             } else if($status == 'accepted') {
-                $petshop =  $petshop->accepted()->latest()->get();
+                $petshop =  $petshop->status('accepted')->latest();
             } else if($status == 'rejected') {
-                $petshop =  $petshop->rejected()->latest()->get();
+                $petshop =  $petshop->status('rejected')->latest();
             }
+
+            return $petshop->get();
     } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
@@ -125,9 +128,14 @@ class PetshopCrudController extends CrudController
 
     public function acceptPetshop($id){
         try {
-        $Petshop = Petshop::find($id)->update([
+
+        $petshop = Petshop::find($id)->first();
+        $petshop->update([
             'status' => 'accepted',
         ]);
+
+        $user = User::where('id', $petshop->user_id)->first();
+        $user->assignRole('petshop_staff');
         return response()->json([
             'message' => 'Petshop Approved',
         ]);

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PetshopCrudController;
 
 // --------------------------
 // Custom Backpack Routes
@@ -23,7 +24,9 @@ Route::group([
     Route::crud('product', 'ProductCrudController');
 
     //REGISTER PETSHOP STATUS
-    Route::post('get_petshop_list', 'PetshopCrudController@getPetshopList');
-    Route::post('accept_petshop', 'PetshopCrudController@acceptPetshop');
-    Route::post('reject_petshop', 'PetshopCrudController@rejectPetshop');
+
+    Route::post('accept_petshop/{id}', [PetshopCrudController::class, 'acceptPetshop']);
+    Route::post('reject_petshop/{id}', [PetshopCrudController::class, 'rejectPetshop']);
+    Route::post('get_petshop_list', [PetshopCrudController::class, 'getPetshopList']);
 }); // this should be the absolute last line of this file
+
