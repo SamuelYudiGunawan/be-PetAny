@@ -111,6 +111,68 @@ class ProductController extends Controller
         }
     }
 
+    public function editProduct(Request $request, $id) {
+    $request->validate([
+        'name' => 'string',
+        'description' => 'string',
+        'image' => 'file|mimes:png,jpg',
+        'price' => 'string',
+        'category' => 'string',
+    ]);
+
+    $product = Product::find($id);
+    if (!$product) {
+        return response()->json(['error' => 'Product not found.'], 404);
+    }
+
+    try {
+        if ($request->hasFile('image')) {
+            $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('image')) . "." . $request->file('image')->getClientOriginalExtension();
+            $imagePath = "storage/document/product_image/" . $imageName;
+            $request->image->storeAs(
+                "public/document/product_image",
+                $imageName
+            );
+            $product->image = url('/').'/'.$imagePath;
+        }
+
+        if ($request->has('name')) {
+            $product->name = $request->name;
+        }
+        if ($request->has('description')) {
+            $product->description = $request->description;
+        }
+        if ($request->has('price')) {
+            $product->price = $request->price;
+        }
+        if ($request->has('category')) {
+            $product->category = $request->category;
+        }
+
+        $product->save();
+
+        return response()->json([
+            'data' => $product,
+        ]);
+    } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return response()->json(['error' => 'Error updating product.'], 500);
+    }
+}
+
+    public function deleteProduct($id) {
+        try{
+        $product = Product::where('id', $id)->first();
+        if(!$product) { 
+            return response()->json(['message' => 'Product not found']); 
+        }
+        $product->delete();
+        return response()->json(['message' => 'Product deleted']); 
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
+    }
+
     public function getProductForm()
     {
         return [
