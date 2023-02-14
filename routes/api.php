@@ -61,5 +61,5 @@ Route::get('/bookappoinment-form', [BookAppoinmentController::class, 'getBookApp
 //PRODUCT
 Route::post('/add-product', [ProductController::class, 'addProduct'])->middleware(['auth:sanctum']);
 Route::get('/get-product', [ProductController::class, 'getAllProduct'])->middleware(['auth:sanctum']);
-Route::get('/get-product/{id}', [ProductController::class, 'getBProduct'])->middleware(['auth:sanctum']);
+Route::get('/get-product/{id}', [ProductController::class, 'getProduct'])->middleware(['auth:sanctum']);
 Route::get('/product-form', [ProductController::class, 'getProductForm']);

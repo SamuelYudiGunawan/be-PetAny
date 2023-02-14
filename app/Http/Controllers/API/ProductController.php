@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -41,27 +42,28 @@ class ProductController extends Controller
             'location' => $request->location,
             'category' => $request->category,
         ]);
-        } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        }
-
         return response()->json([
             'data' => $product,
         ]);
-    
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
     }
     public function getAllProduct(){
         // try{
-        //     $data = Product::with('user_id:id,name')->get();
+        //     $data = Product::where('user_id', Auth::user()->id)->get();
+        //     return response()->json([
+        //         'data' => $data,
+        //     ]);
         // } catch (\Exception $e) {
         // Log::error($e->getMessage());
         // }
         
-        // return response()->json([
-        //     'data' => $data,
-        // ]);
+
         try{
-            $data = Product::with('user_id:id,name')->where('user_id', Auth::user()->id)->get();
+            // $data = Product::get();
+            // $data = Product::where('petshop_id', $data->petshop_id)->get();
+            $data = Product::with('petshop_id:id,id')->get();
             $response = [];
             foreach ($data as $d) {
                 array_push($response, [
@@ -74,30 +76,39 @@ class ProductController extends Controller
                     'location' => $d->location,
                     'category' => $d->category,
                     'links' => [
-                        'self' => '/api/get-medicalrecord/' . $d->id,
+                        'self' => '/api/get-product/' . $d->id,
                     ],
                 ]);
             }
+            return response()->json([
+                $response
+            ]);
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
         
-        return response()->json([
-            $response
-        ]);
     }
-
     public function getProduct($id)
     {
         try{
-            $data = Product::with('user_id:id,name')->find($id);
+            $d = Product::with('petshop_id:id')->find($id)->first();
+            return response()->json([
+                'petshop_id' => $d->petshop_id,
+                'name' => $d->name,
+                'description' => $d->description,
+                'image' => $d->image,
+                'stock' => $d->stock,
+                'price' => $d->price,
+                'location' => $d->location,
+                'category' => $d->category,
+                'links' => [
+                    'add_wishlist' => 'api/add-wishlist?product_id=' . $d->id,
+                    'add_cart' => 'api/add-cart?product_id=' . $d->id,
+                ],
+            ]);
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
-        
-        return response()->json([
-            'data' => $data,
-        ]);
     }
 
     public function getProductForm()
