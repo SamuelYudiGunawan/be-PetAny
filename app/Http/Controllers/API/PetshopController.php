@@ -82,6 +82,7 @@ class PetshopController extends Controller
                     'city' => $d->city,
                     'postal_code' => $d->postal_code,
                     'petshop_address' => $d->petshop_address,
+                    'status'=>$d->status,
                     'links' => [
                         'self' => '/api/get-petshop/' . $d->id,
                     ],

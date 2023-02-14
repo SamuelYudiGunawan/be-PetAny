@@ -28,6 +28,8 @@ class UserController extends Controller
             'phone_number' => $request->phone_number,
         ]);
 
+        $user->assignRole('customer');
+
         $token = $user->createToken('Token-Register')->plainTextToken;
         } catch (\Exception $e) {
         Log::error($e->getMessage());

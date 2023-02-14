@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Models\Petshop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -33,6 +34,7 @@ class PetshopCrudController extends CrudController
         CRUD::setModel(\App\Models\Petshop::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/petshop');
         CRUD::setEntityNameStrings('petshop', 'petshops');
+        CRUD::setListView('backpack::crud.petshop_list');   
     }
 
     /**
@@ -43,17 +45,17 @@ class PetshopCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::column('petshop_name');
-        CRUD::column('company_name');
-        CRUD::column('owner');
-        CRUD::column('phone_number');
-        CRUD::column('petshop_email');
-        CRUD::column('permit');
-        CRUD::column('province');
-        CRUD::column('city');
-        CRUD::column('district');
-        CRUD::column('postal_code');
-        CRUD::column('petshop_address');
+        // CRUD::column('petshop_name');
+        // CRUD::column('company_name');
+        // CRUD::column('owner');
+        // CRUD::column('phone_number');
+        // CRUD::column('petshop_email');
+        // CRUD::column('permit');
+        // CRUD::column('province');
+        // CRUD::column('city');
+        // CRUD::column('district');
+        // CRUD::column('postal_code');
+        // CRUD::column('petshop_address');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -100,5 +102,64 @@ class PetshopCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    public function getPetshopList(Request $request)
+    {
+        $data = [];
+        try{
+            $status = $request->status;
+            
+            $petshop = Petshop::with('user_id:id,name');
+
+            if ($status == 'pending') {
+                $petshop = $petshop->status('pending')->latest();
+            } else if($status == 'accepted') {
+                $petshop =  $petshop->status('accepted')->latest();
+            } else if($status == 'rejected') {
+                $petshop =  $petshop->status('rejected')->latest();
+            }
+
+            return $petshop->get();
+    } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
+    }
+
+    public function acceptPetshop($id){
+        try {
+
+        $petshop = Petshop::find($id)->first();
+        $petshop->update([
+            'status' => 'accepted',
+        ]);
+
+        $user = User::where('id', $petshop->user_id)->first();
+        $user->assignRole('petshop_staff');
+        return response()->json([
+            'message' => 'Petshop Approved',
+        ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return response()->json([
+            'message' => $e->getMessage(),
+        ]);
+        }
+    }
+
+    public function rejectPetshop($id){
+        try {
+        $Petshop = Petshop::find($id)->update([
+            'status' => 'rejected',
+        ]);
+        return response()->json([
+            'message' => 'Petshop Rejected',
+        ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return response()->json([
+            'message' => $e->getMessage(),
+        ]);
+        }
     }
 }
