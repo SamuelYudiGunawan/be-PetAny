@@ -53,6 +53,52 @@ class PetController extends Controller
 
     }
 
+    public function editPet(Request $request, $id) {
+        $request->validate([
+            'pet_name' => 'string',
+            'pet_image' => 'file',
+            'age' =>'string',
+            'allergies' => 'string',
+            'pet_genus' => 'string',
+            'pet_species' => 'string',
+            'weight' => 'string',
+        ]);
+    
+        $pet = Pet::find($id);
+        if (!$pet) {
+            return response()->json(['error' => 'Product not found.'], 404);
+        }
+    
+        try {
+            if ($request->hasFile('pet_image')) {
+                $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('pet_image')) . "." . $request->file('pet_image')->getClientOriginalExtension();
+                $imagePath = "storage/document/pet_image/" . $imageName;
+                $request->pet_image->storeAs(
+                    "public/document/pet_image",
+                    $imageName
+                );
+                $pet->pet_image = url('/').'/'.$imagePath;
+            }
+    
+            $pet::where('id', $id)->update([
+                'pet_name' => $request->pet_name,
+                'age' => $request->age,
+                'allergies' => $request->allergies,
+                'pet_genus' => $request->pet_genus,
+                'pet_species' => $request->pet_species,
+                'weight' => $request->weight,
+                'pet_image' => $request->hasFile('pet_image') ? url('/').'/'.$imagePath : $pet->image,
+            ]);
+    
+            return response()->json([
+                'message' => 'Pet updated',
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error updating product.'], 500);
+        }
+    }
+
     public function getPetForm()
     {
         return [
