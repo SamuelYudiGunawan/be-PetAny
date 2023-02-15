@@ -87,7 +87,7 @@ class PetController extends Controller
                 'pet_genus' => $request->pet_genus,
                 'pet_species' => $request->pet_species,
                 'weight' => $request->weight,
-                'pet_image' => $request->hasFile('pet_image') ? url('/').'/'.$imagePath : $pet->image,
+                'pet_image' => $request->hasFile('pet_image') ? url('/').'/'.$imagePath : $pet->pet_image,
             ]);
     
             return response()->json([
@@ -160,27 +160,15 @@ class PetController extends Controller
                         'self' => '/api/get-pet/' . $d->id,
                     ],
                 ]);
-            }
+            }    
+        return response()->json($response);
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
-        
-        return response()->json([
-            $response
-        ]);
     }
 
     public function getPet($id)
     {
-        // try{
-        //     $data = Pet::with('user_id:id,name')->find($id);
-        // } catch (\Exception $e) {
-        // Log::error($e->getMessage());
-        // }
-        
-        // return response()->json([
-        //     'data' => $data,
-        // ]);
         try{
             $d = Pet::with('user_id:id,name')->find($id)->first();
                     return response()->json([
@@ -197,9 +185,7 @@ class PetController extends Controller
                         'add_medical_record' => 'api/add-medicalrecord?pet_id=' . $d->id, 
                     ],
                 ]);
-        return response()->json([
-            $response
-        ]);
+        return response()->json($response);
             // return $data;
         } catch (\Exception $e) {
         Log::error($e->getMessage());
@@ -225,17 +211,22 @@ class PetController extends Controller
             'description' => 'required|string',
             'treatment' => 'required|string',
             'date' => 'required|date',
-            'attachment' => 'required|file',
+            // 'attachment' => 'file',
             'pet_id' => 'required|string'
         ]);
 
         try{
-        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('attachment')) . "." . $request->file('attachment')->getClientOriginalExtension();
-        $filePath = "storage/document/attachment/" . $fileName;
-        $request->attachment->storeAs(
-            "public/document/attachment",
-            $fileName
-        );
+        $attachment = null;
+        $filePath = null;
+        if ($request->hasFile('attachment')) {
+            $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('attachment')) . "." . $request->file('attachment')->getClientOriginalExtension();
+            $filePath = "storage/document/attachment/" . $fileName;
+            $request->attachment->storeAs(
+                "public/document/attachment",
+                $fileName
+            );
+            $attachment = url('/').'/'.$filePath;
+        }
 
 
         $medical_record = MedicalRecord::create([
@@ -243,18 +234,23 @@ class PetController extends Controller
             'description' => $request->description,
             'treatment' => $request->treatment,
             'date' => $request->date,
-            'attachment' => url('/').'/'.$filePath,
+            'attachment' => $attachment,
             'pet_id' => $request->pet_id,
         ]);
-
-        
-        } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        }
 
         return response()->json([
             'data' => $medical_record,
         ]);
+        
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+
+
     }
     protected function getAllMedicalRecord(){
         try{
