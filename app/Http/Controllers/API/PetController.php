@@ -227,13 +227,12 @@ class PetController extends Controller
                     ],
                 ]);
             }
+            return response()->json([
+                $response
+            ]);
         } catch (\Exception $e) {
         Log::error($e->getMessage());
         }
-        
-        return response()->json([
-            $response
-        ]);
     }
 
     public function getMedicalRecord($id)
