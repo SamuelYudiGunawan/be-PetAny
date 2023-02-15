@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Product;
+use App\Models\JamOperasional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -20,6 +21,10 @@ class Petshop extends Model
     public function product()
     {
         return $this->hasMany(Product::class);
+    }
+    public function jamOperasional()
+    {
+        return $this->hasMany(JamOperasional::class);
     }
     public function scopeStatus($query, $value)
     {

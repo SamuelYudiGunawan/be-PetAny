@@ -9,6 +9,7 @@ use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\Admin\PetCrudController;
 use App\Http\Controllers\Admin\PetshopCrudController;
 use App\Http\Controllers\API\BookAppoinmentController;
+use App\Http\Controllers\API\JamOperasionalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,10 @@ Route::post('/create-petshop', [PetshopController::class, 'create'])->middleware
 Route::get('/get-petshop', [PetshopController::class, 'getAllPetshop']);
 Route::get('/get-petshop/{id}', [PetshopController::class, 'getPetshop']);
 Route::get('/petshop-form', [PetshopController::class, 'getPetshopForm']);
+    //JAM OPERASIONAL
+    Route::post('/petshop/{id}/create-jam-operasional', [JamOperasionalController::class, 'createJamOperasional'])->middleware(['auth:sanctum']);;
+    // Route::post('/petshop/{id}/update-jam-operasional/{id}', [JamOperasionalController::class, 'updateJamOperasional'])->middleware(['auth:sanctum']);;
+    Route::get('/petshop/{id}/get-jam-operasional', [JamOperasionalController::class, 'getJamOperasional'])->middleware(['auth:sanctum']);;
 
 //PET
 Route::post('/add-pet', [PetController::class, 'addPet'])->middleware(['auth:sanctum']);
