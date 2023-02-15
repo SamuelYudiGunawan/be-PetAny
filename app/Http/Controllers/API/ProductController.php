@@ -136,23 +136,16 @@ class ProductController extends Controller
             $product->image = url('/').'/'.$imagePath;
         }
 
-        if ($request->has('name')) {
-            $product->name = $request->name;
-        }
-        if ($request->has('description')) {
-            $product->description = $request->description;
-        }
-        if ($request->has('price')) {
-            $product->price = $request->price;
-        }
-        if ($request->has('category')) {
-            $product->category = $request->category;
-        }
-
-        $product->save();
+        $product::where('id', $id)->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'category' => $request->category,
+            'image' => $request->hasFile('image') ? url('/').'/'.$imagePath : $product->image,
+        ]);
 
         return response()->json([
-            'data' => $product,
+            'message' => 'Product updated',
         ]);
     } catch (\Exception $e) {
         Log::error($e->getMessage());
