@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Auth;
 class PetshopController extends Controller
 {
     public function create(Request $request){
+        if (Auth::user()->hasRole('petshop_staff')) {
+            return response()->json([
+                'message' => 'You can not have more than 1 petshop',
+            ], 403);
+        }
         $request->validate([
             'petshop_name' => 'required|string|unique:petshops',
             'petshop_image' => 'required|file|mimes:png,jpg',
@@ -55,13 +60,12 @@ class PetshopController extends Controller
             'petshop_address' => $request->petshop_address,
             'user_id' => Auth::user()->id,
         ]);
-        } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        }
-
         return response()->json([
             'data' => $petshop,
         ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
     }
 
     public function getAllPetshop(){
@@ -88,13 +92,12 @@ class PetshopController extends Controller
                     ],
                 ]);
             }
-        } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        }
-        
         return response()->json([
             $response
         ]);
+        } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        }
     }
 
     public function getPetshop($id)
