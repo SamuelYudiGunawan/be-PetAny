@@ -46,23 +46,15 @@ class ProductController extends Controller
             'data' => $product,
         ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
     public function getAllProduct(){
-        // try{
-        //     $data = Product::where('user_id', Auth::user()->id)->get();
-        //     return response()->json([
-        //         'data' => $data,
-        //     ]);
-        // } catch (\Exception $e) {
-        // Log::error($e->getMessage());
-        // }
-        
-
         try{
-            // $data = Product::get();
-            // $data = Product::where('petshop_id', $data->petshop_id)->get();
             $data = Product::with('petshop_id:id,id')->get();
             $response = [];
             foreach ($data as $d) {
@@ -84,7 +76,11 @@ class ProductController extends Controller
                 $response
             ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
         
     }
@@ -107,7 +103,11 @@ class ProductController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
@@ -148,8 +148,11 @@ class ProductController extends Controller
             'message' => 'Product updated',
         ]);
     } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        return response()->json(['error' => 'Error updating product.'], 500);
+        $errorMessage = $e->getMessage();
+        Log::error($errorMessage);
+        return response()->json([
+            'error' => $errorMessage
+        ], 500);
     }
 }
 
@@ -162,7 +165,11 @@ class ProductController extends Controller
         $product->delete();
         return response()->json(['message' => 'Product deleted']); 
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 

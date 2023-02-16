@@ -121,8 +121,12 @@ class PetshopCrudController extends CrudController
             }
 
             return $petshop->get();
-    } catch (\Exception $e) {
-        Log::error($e->getMessage());
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
@@ -140,10 +144,11 @@ class PetshopCrudController extends CrudController
             'message' => 'Petshop Approved',
         ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        return response()->json([
-            'message' => $e->getMessage(),
-        ]);
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
@@ -156,10 +161,11 @@ class PetshopCrudController extends CrudController
             'message' => 'Petshop Rejected',
         ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        return response()->json([
-            'message' => $e->getMessage(),
-        ]);
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 }
