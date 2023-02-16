@@ -14,6 +14,18 @@ class JamOperasionalController extends Controller
         $data = JamOperasional::with('petshop:id')->where('petshop_id', $id)->get();
         return response()->json($data);
     }
+    public function getJamOperasionalData($id){
+        $data = JamOperasional::with('petshop:id')->where('petshop_id', $id)->get();
+        if(count($data) > 0) {
+            return response()->json([
+                'message' => true,
+        ]);
+        } else {
+            return response()->json([
+                'message' => false,
+            ]);  
+        }
+    }
 
     public function createJamOperasional(Request $request, $id){
         $request->validate([
