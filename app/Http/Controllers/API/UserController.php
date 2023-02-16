@@ -64,15 +64,19 @@ class UserController extends Controller
         $user = User::where('email', $request->email)->firstOrFail();
 
         $token = $user->createToken('Token-Register')->plainTextToken;
-        
-        } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        }
 
         return response()->json([
             'data' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer'
         ]);
+        
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
     } 
 }

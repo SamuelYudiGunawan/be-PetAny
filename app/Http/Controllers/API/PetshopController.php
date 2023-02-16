@@ -64,7 +64,11 @@ class PetshopController extends Controller
             'data' => $petshop,
         ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
@@ -96,18 +100,28 @@ class PetshopController extends Controller
             $response
         ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
-    public function getPetshop($id)
-    {
-        $data = Petshop::with('user_id:id,name')->find($id);
+    public function getPetshop($id){
+        try {
+            $data = Petshop::with('user_id:id,name')->find($id);
         
-        
-        return response()->json([
-            'data' => $data,
-        ]);
+            return response()->json([
+                'data' => $data,
+            ]);
+        } catch (\Throwable $th) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
     }
 
     public function getPetshopForm()

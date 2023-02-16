@@ -42,15 +42,16 @@ class PetController extends Controller
             'pet_species' => $request->pet_species,
             'weight' => $request->weight,
         ]);
+            return response()->json([
+                'data' => $pet,
+            ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
-
-        return response()->json([
-            'data' => $pet,
-        ]);
-    
-
     }
 
     public function editPet(Request $request, $id) {
@@ -94,8 +95,11 @@ class PetController extends Controller
                 'message' => 'Pet updated',
             ]);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json(['error' => 'Error updating product.'], 500);
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
@@ -163,7 +167,11 @@ class PetController extends Controller
             }    
         return response()->json($response);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
@@ -186,9 +194,12 @@ class PetController extends Controller
                     ],
                 ]);
         return response()->json($response);
-            // return $data;
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
@@ -201,7 +212,11 @@ class PetController extends Controller
             $pet->delete();
             return response()->json(['message' => 'Pet deleted']); 
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
@@ -249,8 +264,6 @@ class PetController extends Controller
                 'error' => $errorMessage
             ], 500);
         }
-
-
     }
     protected function getAllMedicalRecord(){
         try{
@@ -269,26 +282,30 @@ class PetController extends Controller
                     ],
                 ]);
             }
-            return response()->json([
-                $response
-            ]);
+            return response()->json($response);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
     public function getMedicalRecord($id)
     {
         try{
-            // $data = MedicalRecord::find($id);
             $data = MedicalRecord::with('pet_id:id,pet_name')->find($id);
+            return response()->json([
+                'data' => $data,
+            ]);
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
-        
-        return response()->json([
-            'data' => $data,
-        ]);
     }
 
     public function deleteMedicalRecord($id) {
@@ -300,7 +317,11 @@ class PetController extends Controller
         $medical_record->delete();
         return response()->json(['message' => 'Medical record deleted']); 
         } catch (\Exception $e) {
-        Log::error($e->getMessage());
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
     }
 
