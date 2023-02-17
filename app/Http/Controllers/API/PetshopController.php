@@ -115,7 +115,7 @@ class PetshopController extends Controller
             return response()->json([
                 'data' => $data,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
             return response()->json([
