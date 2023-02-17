@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Models\JamOperasional;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
