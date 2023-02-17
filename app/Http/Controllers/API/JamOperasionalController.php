@@ -50,7 +50,6 @@ class JamOperasionalController extends Controller
             // 'petshop_id' => 'required|exists:petshops,id'
         ]);
         try {
-
             foreach ($request->all() as $d) {
                 JamOperasional::updateOrCreate(['petshop_id' => $id, 'hari_buka' => $d['hari_buka'],], [
                     'hari_buka' => $d['hari_buka'],

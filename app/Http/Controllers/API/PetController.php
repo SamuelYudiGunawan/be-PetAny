@@ -178,7 +178,7 @@ class PetController extends Controller
     public function getPet($id)
     {
         try{
-            $d = Pet::with('user_id:id,name')->find($id)->first();
+            $d = Pet::with('user_id:id,name')->find($id);
                     return response()->json([
                     'id' => $d->id,
                     'user_id' => $d->user_id,
