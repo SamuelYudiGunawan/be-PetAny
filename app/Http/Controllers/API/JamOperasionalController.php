@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Models\JamOperasional;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
@@ -50,7 +51,7 @@ class JamOperasionalController extends Controller
             // 'petshop_id' => 'required|exists:petshops,id'
         ]);
         try {
-
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             foreach ($request->all() as $d) {
                 JamOperasional::updateOrCreate(['petshop_id' => $id, 'hari_buka' => $d['hari_buka'],], [
                     'hari_buka' => $d['hari_buka'],
