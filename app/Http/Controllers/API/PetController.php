@@ -193,7 +193,6 @@ class PetController extends Controller
                         'add_medical_record' => 'api/add-medicalrecord?pet_id=' . $d->id, 
                     ],
                 ]);
-        return response()->json($response);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);

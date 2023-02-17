@@ -1,11 +1,9 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\JamOperasional;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
 class JamOperasionalController extends Controller
@@ -14,7 +12,7 @@ class JamOperasionalController extends Controller
         try {
             $data = JamOperasional::with('petshop:id')->where('petshop_id', $id)->get();
             return response()->json($data);
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
             return response()->json([
@@ -34,7 +32,7 @@ class JamOperasionalController extends Controller
                 'message' => false,
             ]);  
         }
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
             return response()->json([
@@ -52,7 +50,6 @@ class JamOperasionalController extends Controller
             // 'petshop_id' => 'required|exists:petshops,id'
         ]);
         try {
-            $data_jam_operasional = [];
 
             foreach ($request->all() as $d) {
                 JamOperasional::updateOrCreate(['petshop_id' => $id, 'hari_buka' => $d['hari_buka'],], [
@@ -66,7 +63,7 @@ class JamOperasionalController extends Controller
             return response()->json([
                 'message' => true
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
             return response()->json([
