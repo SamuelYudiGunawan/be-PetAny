@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use App\Mail\VerifyEmail;
 
 class UserController extends Controller
 {
@@ -31,8 +33,11 @@ class UserController extends Controller
         $user->assignRole('customer');
 
         $token = $user->createToken('Token-Register')->plainTextToken;
+
+        event(new Registered($user));
         
         return response()->json([
+            'message' => 'Please check your email to verify your account.',
             'data' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer'
@@ -79,4 +84,29 @@ class UserController extends Controller
             ], 500);
         }
     } 
+    
+    public function sendVerificationEmail(Request $request)
+    {
+        try {
+            if ($request->user()->hasVerifiedEmail()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Already Verified',
+                ], Response::HTTP_ALREADY_REPORTED);
+            }
+    
+            $request->user()->sendEmailVerificationNotification();
+    
+            return response()->json([
+                'status' => true,
+                'message' => 'Verification link sent',
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
