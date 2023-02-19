@@ -178,8 +178,8 @@ class PetController extends Controller
     public function getPet($id)
     {
         try{
-            $d = Pet::with('user_id:id,name', 'medical_record')->find($id);
-            $data = MedicalRecord::with('pet_id:id,pet_name')->get();
+            $d = Pet::with('user_id:id,name')->find($id);
+            $data = MedicalRecord::with('pet_id:id,pet_name')->where('pet_id', $id)->get();
             $response = [];
             foreach ($data as $medrec) {
                 array_push($response, [
