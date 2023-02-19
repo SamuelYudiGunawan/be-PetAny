@@ -178,7 +178,7 @@ class PetController extends Controller
     public function getPet($id)
     {
         try{
-            $d = Pet::with('user_id:id,name')->find($id);
+            $d = Pet::with('user_id:id,name', 'medical_record')->find($id);
                     return response()->json([
                     'id' => $d->id,
                     'user_id' => $d->user_id,
@@ -189,6 +189,7 @@ class PetController extends Controller
                     'pet_genus' => $d->pet_genus,
                     'pet_species' => $d->pet_species,
                     'weight' => $d->weight,
+                    'medical_record' => $d->medical_record,
                     'links' => [
                         'add_medical_record' => 'api/add-medicalrecord?pet_id=' . $d->id, 
                     ],
