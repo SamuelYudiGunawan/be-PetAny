@@ -20,7 +20,7 @@ class PetshopController extends Controller
         }
         $request->validate([
             'petshop_name' => 'required|string|unique:petshops',
-            'petshop_image' => 'required|file|mimes:png,jpg',
+            // 'petshop_image' => 'required|file|mimes:png,jpg',
             'company_name' => 'required|string|unique:petshops',
             'phone_number' => 'required|string',
             'petshop_email' => 'required|email|string|unique:petshops',
@@ -33,22 +33,28 @@ class PetshopController extends Controller
         ]);
 
         try{
+        $petshop_image = null;
+        $imagePath = null;
         $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('permit')) . "." . $request->file('permit')->getClientOriginalExtension();
         $filePath = "storage/document/permit/" . $fileName;
         $request->permit->storeAs(
             "public/document/permit",
             $fileName
         );
-        $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('petshop_image')) . "." . $request->file('petshop_image')->getClientOriginalExtension();
-        $imagePath = "storage/document/petshop_image/" . $imageName;
-        $request->petshop_image->storeAs(
-            "public/document/petshop_image",
-            $imageName
-        );
+        
+        if ($request->hasFile('petshop_image')) {
+            $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('petshop_image')) . "." . $request->file('petshop_image')->getClientOriginalExtension();
+            $imagePath = "storage/document/petshop_image/" . $imageName;
+            $request->petshop_image->storeAs(
+                "public/document/petshop_image",
+                $imageName
+            );
+            $petshop_image = url('/').'/'.$imagePath;
+        }
 
         $petshop = Petshop::create([
             'petshop_name' => $request->petshop_name,
-            'petshop_image' => url('/').'/'.$imagePath,
+            'petshop_image' => $petshop_image,
             'company_name' => $request->company_name,
             'district' => $request->district,
             'phone_number' => $request->phone_number,
