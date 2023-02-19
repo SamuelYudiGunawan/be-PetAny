@@ -179,21 +179,36 @@ class PetController extends Controller
     {
         try{
             $d = Pet::with('user_id:id,name', 'medical_record')->find($id);
-                    return response()->json([
-                    'id' => $d->id,
-                    'user_id' => $d->user_id,
-                    'pet_name' => $d->pet_name,
-                    'pet_image' => $d->pet_image,
-                    'age' => $d->age,
-                    'allergies' => $d->allergies,
-                    'pet_genus' => $d->pet_genus,
-                    'pet_species' => $d->pet_species,
-                    'weight' => $d->weight,
-                    'medical_record' => $d->medical_record,
+            $data = MedicalRecord::with('pet_id:id,pet_name')->get();
+            $response = [];
+            foreach ($data as $medrec) {
+                array_push($response, [
+                    'title' => $medrec->title,
+                    'description' => $medrec->description,
+                    'treatment' => $medrec->treatment,
+                    'date' => $medrec->date,
+                    'attachment' => $medrec->attachment,
+                    'pet_id' => $medrec->pet_id,
                     'links' => [
-                        'add_medical_record' => 'api/add-medicalrecord?pet_id=' . $d->id, 
+                        'self' => '/api/get-medicalrecord/' . $medrec->id,
                     ],
                 ]);
+            }
+                return response()->json([
+                'id' => $d->id,
+                'user_id' => $d->user_id,
+                'pet_name' => $d->pet_name,
+                'pet_image' => $d->pet_image,
+                'age' => $d->age,
+                'allergies' => $d->allergies,
+                'pet_genus' => $d->pet_genus,
+                'pet_species' => $d->pet_species,
+                'weight' => $d->weight,
+                'medical_record' => $response,
+                'links' => [
+                    'add_medical_record' => 'api/add-medicalrecord?pet_id=' . $d->id, 
+                ],
+            ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
