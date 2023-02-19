@@ -206,7 +206,7 @@ class PetController extends Controller
                 'weight' => $d->weight,
                 'medical_record' => $response,
                 'links' => [
-                    'add_medical_record' => '/api/add-medicalrecord?pet_id=' . $d->id, 
+                    'medicalrecord' => '/api/add-medicalrecord?pet_id=' . $d->id, 
                 ],
             ]);
         } catch (\Exception $e) {
