@@ -109,4 +109,17 @@ class UserController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function logout(Request $request)
+    {
+        try {
+            $request->user()->currentAccessToken()->delete();
+        } catch (\Throwable $e){
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
 }

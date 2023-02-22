@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\API\PetController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\PetshopController;
@@ -31,16 +32,33 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // AUTH
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
+Route::post('/logout', [UserController::class, 'logout'])->middleware(['auth:sanctum']);
 // ->middleware('verified');
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-})->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
-
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return response()->json(['message' => 'Verification link sent!']);
-})->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
-
+    // VERIFY EMAIL
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+    })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return response()->json(['message' => 'Verification link sent!']);
+    })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+        // // RESET PASSWORD
+        // // SENDING EMAIL
+        // Route::get('/forgot-password', function () {
+        //     return view('auth.forgot-password');
+        // })->middleware('guest')->name('password.request');
+        // Route::post('/forgot-password', function (Request $request) {
+        //     $request->validate(['email' => 'required|email']);
+        //     $status = Password::sendResetLink(
+        //         $request->only('email')
+        //     );
+        //     return $status === Password::RESET_LINK_SENT
+        //                 ? back()->with(['status' => __($status)])
+        //                 : back()->withErrors(['email' => __($status)]);
+        // })->middleware('guest')->name('password.email');
+        // Route::get('/reset-password/{token}', function ($token) {
+        //     return view('auth.reset-password', ['token' => $token]);
+        // })->middleware('guest')->name('password.reset');
 // PETSHOP
 Route::post('/create-petshop', [PetshopController::class, 'create'])->middleware(['auth:sanctum']);
 Route::post('/add-staff', [PetshopController::class, 'addStaff'])->middleware(['auth:sanctum']);

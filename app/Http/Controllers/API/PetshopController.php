@@ -134,123 +134,147 @@ class PetshopController extends Controller
 
     public function addStaff(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|string|max:200',
-            'roles.*' => 'in:dokter,cashier,product_manager',
-        ]);
-
-        $user = User::where('email', $request->email)->firstOrFail();
-
-        $staff = Staff::where('user_id', $user->id)->first();
-
-        if ($staff) {
-            // If staff already exists, retrieve the user's existing roles and add the new roles
-            $existingRoles = $user->roles->pluck('name')->toArray();
-            $newRoles = array_unique(array_merge($existingRoles, $request->roles));
-
-            // Check if any of the new roles already exist for the user
-            $duplicateRoles = array_intersect($existingRoles, $request->roles);
-            if (!empty($duplicateRoles)) {
-                return response()->json([
-                    'message' => 'Cannot add staff. The user already has the following role(s): ' . implode(', ', $duplicateRoles),
-                ], 400);
-            }
-
-            $user->syncRoles($newRoles);
-        } else {
-            // If staff does not exist, create a new record
-            $user->assignRole('petshop_staff');
-
-            $staffCount = Staff::where('petshop_id', $request->petshop_id)->count();
-
-            if ($staffCount >= 5) {
-                return response()->json([
-                    'message' => 'Cannot add staff. The petshop already has the maximum number of staff.',
-                ], 400);
-            }
-
-            Staff::create([
-                'user_id' => $user->id,
-                'petshop_id' => $request->petshop_id,
+        try {
+            $request->validate([
+                'email' => 'required|email|string|max:200',
+                'roles.*' => 'in:dokter,cashier,product_manager',
             ]);
-
-            if ($request->has('roles')) {
-                foreach ($request->roles as $role) {
-                    if ($user->hasRole($role)) {
-                        return response()->json([
-                            'message' => 'Cannot add role. The user already has the ' . $role . ' role.',
-                        ], 400);
+    
+            $user = User::where('email', $request->email)->firstOrFail();
+    
+            $staff = Staff::where('user_id', $user->id)->first();
+    
+            if ($staff) {
+                // If staff already exists, retrieve the user's existing roles and add the new roles
+                $existingRoles = $user->roles->pluck('name')->toArray();
+                $newRoles = array_unique(array_merge($existingRoles, $request->roles));
+    
+                // Check if any of the new roles already exist for the user
+                $duplicateRoles = array_intersect($existingRoles, $request->roles);
+                if (!empty($duplicateRoles)) {
+                    return response()->json([
+                        'message' => 'Cannot add staff. The user already has the following role(s): ' . implode(', ', $duplicateRoles),
+                    ], 400);
+                }
+    
+                $user->syncRoles($newRoles);
+            } else {
+                // If staff does not exist, create a new record
+                $user->assignRole('petshop_staff');
+    
+                $staffCount = Staff::where('petshop_id', $request->petshop_id)->count();
+    
+                if ($staffCount >= 5) {
+                    return response()->json([
+                        'message' => 'Cannot add staff. The petshop already has the maximum number of staff.',
+                    ], 400);
+                }
+    
+                Staff::create([
+                    'user_id' => $user->id,
+                    'petshop_id' => $request->petshop_id,
+                ]);
+    
+                if ($request->has('roles')) {
+                    foreach ($request->roles as $role) {
+                        if ($user->hasRole($role)) {
+                            return response()->json([
+                                'message' => 'Cannot add role. The user already has the ' . $role . ' role.',
+                            ], 400);
+                        }
+                        $user->assignRole($role);
                     }
-                    $user->assignRole($role);
                 }
             }
+            return response()->json([
+                'message' => 'Staff added/updated successfully.',
+                'data' => $user,
+            ]);
+        } catch (\Throwable $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
-        return response()->json([
-            'message' => 'Staff added/updated successfully.',
-            'data' => $user,
-        ]);
     }
 
     public function removeRole(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|string|max:200',
-            'roles' => 'required|array',
-        ]);
-    
-        $user = User::where('email', $request->email)->firstOrFail();
-    
-        foreach ($request->roles as $roleName) {
-            if (!$user->hasRole($roleName)) {
-                return response()->json([
-                    'message' => 'Cannot remove role. The user does not have the ' . $roleName . ' role.',
-                ], 400);
+        try {
+            $request->validate([
+                'email' => 'required|email|string|max:200',
+                'roles' => 'required|array',
+            ]);
+        
+            $user = User::where('email', $request->email)->firstOrFail();
+        
+            foreach ($request->roles as $roleName) {
+                if (!$user->hasRole($roleName)) {
+                    return response()->json([
+                        'message' => 'Cannot remove role. The user does not have the ' . $roleName . ' role.',
+                    ], 400);
+                }
+        
+                $role = Role::where('name', $roleName)->first();
+                $user->removeRole($role);
             }
-    
-            $role = Role::where('name', $roleName)->first();
-            $user->removeRole($role);
+        
+            return response()->json([
+                'message' => 'Role(s) removed successfully.',
+                'data' => $user,
+            ]);
+        } catch (\Throwable $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
-    
-        return response()->json([
-            'message' => 'Role(s) removed successfully.',
-            'data' => $user,
-        ]);
     }
     
     public function removePetshopStaff(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|string|max:200',
-        ]);
-    
-        $user = User::where('email', $request->email)->firstOrFail();
-    
-        if (!$user->hasRole('petshop_staff')) {
+        try {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+            ]);
+        
+            $user = User::findOrFail($request->user_id);
+        
+            if (!$user->hasRole('petshop_staff')) {
+                return response()->json([
+                    'message' => 'Cannot remove petshop staff role. The user does not have the petshop_staff role.',
+                ], 400);
+            }
+        
+            // Get all roles except customer
+            $roles = $user->roles->where('name', '<>', 'customer');
+        
+            // Remove all roles except customer
+            foreach ($roles as $role) {
+                $user->removeRole($role);
+            }
+        
+            $user->removeRole('petshop_staff');
+        
+            $staff = Staff::where('user_id', $user->id)->first();
+        
+            if ($staff) {
+                $staff->delete();
+            }
+        
             return response()->json([
-                'message' => 'Cannot remove petshop staff role. The user does not have the petshop_staff role.',
-            ], 400);
+                'message' => 'Petshop staff role removed successfully.',
+                'data' => $user,
+            ]);
+        } catch (\Throwable $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
-    
-        // Get all roles except customer
-        $roles = $user->roles->where('name', '<>', 'customer');
-    
-        // Remove all roles except customer
-        foreach ($roles as $role) {
-            $user->removeRole($role);
-        }
-    
-        $user->removeRole('petshop_staff');
-    
-        $staff = Staff::where('user_id', $user->id)->first();
-    
-        if ($staff) {
-            $staff->delete();
-        }
-    
-        return response()->json([
-            'message' => 'Petshop staff role removed successfully.',
-            'data' => $user,
-        ]);
     }
     
     public function getPetshopForm()
