@@ -20,9 +20,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->integer('phone_number');
-            $table->string('role')->default('customer');
             $table->string('address')->nullable();
-            $table->string('document')->nullable();
+            $table->string('document')->nullable();~
             $table->rememberToken();
             $table->timestamps();
         });
