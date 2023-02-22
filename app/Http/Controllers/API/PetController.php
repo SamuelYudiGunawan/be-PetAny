@@ -241,7 +241,7 @@ class PetController extends Controller
             'description' => 'required|string',
             'treatment' => 'required|string',
             'date' => 'required|date',
-            // 'attachment' => 'file',
+            'attachment.*' => 'required|file',
             'pet_id' => 'required|string'
         ]);
 
