@@ -26,6 +26,7 @@ class PetshopController extends Controller
             'company_name' => 'required|string|unique:petshops',
             'phone_number' => 'required|string',
             'petshop_email' => 'required|email|string|unique:petshops',
+            'permit' => 'required|array',
             'permit.*' => 'required|file',
             'province' => 'required|string',
             'city' => 'required|string',
@@ -37,12 +38,16 @@ class PetshopController extends Controller
         try{
         $petshop_image = null;
         $imagePath = null;
-        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('permit')) . "." . $request->file('permit')->getClientOriginalExtension();
-        $filePath = "storage/document/permit/" . $fileName;
-        $request->permit->storeAs(
-            "public/document/permit",
-            $fileName
-        );
+        $filePaths = [];
+        foreach($request->file('permit') as $file){
+            $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($file) . "." . $file->getClientOriginalExtension();
+            $filePath = "storage/document/permit/" . $fileName;
+            $file->storeAs(
+                "public/document/permit",
+                $fileName
+            );
+            array_push($filePaths, url('/').'/'.$filePath);
+        }
         
         if ($request->hasFile('petshop_image')) {
             $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('petshop_image')) . "." . $request->file('petshop_image')->getClientOriginalExtension();
@@ -61,13 +66,14 @@ class PetshopController extends Controller
             'district' => $request->district,
             'phone_number' => $request->phone_number,
             'petshop_email' => $request->petshop_email,
-            'permit' => url('/').'/'.$filePath,
+            'permit' => json_encode($filePaths),
             'province' => $request->province,
             'city' => $request->city,
             'postal_code' => $request->postal_code,
             'petshop_address' => $request->petshop_address,
             'user_id' => Auth::user()->id,
         ]);
+        Auth::user()->assignRole('petshop_staff');
         return response()->json([
             'data' => $petshop,
         ]);
