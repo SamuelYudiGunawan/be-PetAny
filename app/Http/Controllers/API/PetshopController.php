@@ -26,7 +26,7 @@ class PetshopController extends Controller
             'company_name' => 'required|string|unique:petshops',
             'phone_number' => 'required|string',
             'petshop_email' => 'required|email|string|unique:petshops',
-            'permit' => 'required|file',
+            'permit.*' => 'required|file',
             'province' => 'required|string',
             'city' => 'required|string',
             'district' => 'required|string',
