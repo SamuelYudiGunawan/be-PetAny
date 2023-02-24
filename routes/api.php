@@ -61,6 +61,7 @@ Route::post('/logout', [UserController::class, 'logout'])->middleware(['auth:san
         // })->middleware('guest')->name('password.reset');
 // PETSHOP
 Route::post('/create-petshop', [PetshopController::class, 'create'])->middleware(['auth:sanctum']);
+Route::post('/update-petshop/{id}', [PetshopController::class, 'updatePetshopProfile'])->middleware(['auth:sanctum']);
 Route::post('/add-staff', [PetshopController::class, 'addStaff'])->middleware(['auth:sanctum']);
 Route::delete('/remove-role', [PetshopController::class, 'removeRole'])->middleware(['auth:sanctum']);;
 Route::delete('/remove-staff', [PetshopController::class, 'removePetshopStaff'])->middleware(['auth:sanctum']);;

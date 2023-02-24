@@ -86,6 +86,39 @@ class PetshopController extends Controller
         }
     }
 
+    public function updatePetshopProfile(Request $request, $id)
+    {
+        // Validate the request data
+        $request->validate([
+            'description' => 'nullable|string',
+            'website' => 'nullable|url',
+            'category' => 'nullable|array',
+            'category.*' => 'string|in:grooming,klinik,laboratorium,rawat inap,petshop'
+        ]);
+
+        try {
+            $petshop = Petshop::findOrFail($id);
+            // Get the petshop record based on the provided ID, or create a new one if it doesn't exist
+            $petshop->update([
+                'description' => $request->description,
+                'website' => $request->website,
+                'category' => $request->category,
+            ]);
+
+            // Return a response indicating that the update or create was successful
+            return response()->json([
+                'message' => 'Petshop record updated',
+                'data' => $petshop
+            ], 200);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
     public function getAllPetshop(){
         try{
             $data = Petshop::with('user_id:id,name')->get();
