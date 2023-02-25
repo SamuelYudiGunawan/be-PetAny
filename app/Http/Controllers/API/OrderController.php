@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use Midtrans\Snap;
+use Midtrans\Config;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class OrderController extends Controller
         try {
 
             // Set your Merchant Server Key
-            \Midtrans\Config::$serverKey = 'SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG';
+            Config::$serverKey = 'SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG';
             // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
             \Midtrans\Config::$isProduction = false;
             // Set sanitization on (default)
