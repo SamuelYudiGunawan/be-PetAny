@@ -65,7 +65,7 @@ class OrderController extends Controller
             $order->save();
 
             // Return the Midtrans Snap token to the client
-            return response()->json(['token' => $midtransSnapToken]);
+            return response()->json(['data' => $order]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
