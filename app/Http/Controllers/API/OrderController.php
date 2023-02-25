@@ -31,11 +31,12 @@ class OrderController extends Controller
                 'product_id' => 'sometimes|nullable|exists:products,id',
                 'book_appointment_id' => 'sometimes|nullable|exists:book_appointments,id',
                 'type' => 'required|in:product,book_appointment',
+                'quantity' => 'nullable|integer|min:1',
             ]);
 
             if ($validatedData['type'] === 'product') {
                 $product = Product::findOrFail($validatedData['product_id']);
-                $grossAmount = $product->price;
+                $grossAmount = $product->price * $validatedData['quantity'];
             } else {
                 $grossAmount = 15000;
             }

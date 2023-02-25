@@ -21,8 +21,11 @@ return new class extends Migration
             $table->foreignId('book_appoinment_id')->nullable()->constrained('book_appoinments');
             $table->string('type');
             $table->string('transaction_id')->nullable();
+            $table->integer('quantity')->nullable();
             $table->string('status')->nullable();
             $table->unsignedBigInteger('gross_amount');
+            $table->string('payment_type')->nullable();
+            $table->string('payment_status')->nullable();
             $table->string('midtrans_token')->nullable();
             $table->timestamps();
         });
