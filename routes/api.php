@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\API\PetController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\PetshopController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\Admin\PetCrudController;
@@ -62,21 +63,21 @@ Route::post('/logout', [UserController::class, 'logout'])->middleware(['auth:san
 // PETSHOP
 Route::post('/create-petshop', [PetshopController::class, 'create'])->middleware(['auth:sanctum']);
 Route::post('/update-petshop/{id}', [PetshopController::class, 'updatePetshopProfile'])->middleware(['auth:sanctum']);
-Route::post('/add-staff', [PetshopController::class, 'addStaff'])->middleware(['auth:sanctum']);
-Route::delete('/remove-role', [PetshopController::class, 'removeRole'])->middleware(['auth:sanctum']);;
-Route::delete('/remove-staff', [PetshopController::class, 'removePetshopStaff'])->middleware(['auth:sanctum']);;
 Route::get('/get-petshop', [PetshopController::class, 'getAllPetshop']);
 Route::get('/get-petshop/{id}', [PetshopController::class, 'getPetshop']);
 Route::get('/petshop-form', [PetshopController::class, 'getPetshopForm']);
-    //JAM OPERASIONAL
-    Route::post('/petshop/{id}/create-jam-operasional', [JamOperasionalController::class, 'createJamOperasional'])->middleware(['auth:sanctum']);
-    Route::get('/petshop/{id}/get-jam-operasional-data', [JamOperasionalController::class, 'getJamOperasionalData'])->middleware(['auth:sanctum']);
-    Route::get('/petshop/{id}/get-jam-operasional', [JamOperasionalController::class, 'getJamOperasional'])->middleware(['auth:sanctum']);
+    // MANAGE STAFF
+    Route::post('/add-staff', [PetshopController::class, 'addStaff'])->middleware(['auth:sanctum']);
+    Route::delete('/remove-role', [PetshopController::class, 'removeRole'])->middleware(['auth:sanctum']);;
+    Route::delete('/remove-staff', [PetshopController::class, 'removePetshopStaff'])->middleware(['auth:sanctum']);;
         //JAM OPERASIONAL
-        Route::post('/dokter/{id}/create-jam-operasional', [JamOperasionalDokterController::class, 'createJamOperasionalDokter'])->middleware(['auth:sanctum']);
-        Route::get('/dokter/{id}/get-jam-operasional-data', [JamOperasionalDokterController::class, 'getJamOperasionalDataDokter'])->middleware(['auth:sanctum']);
-        Route::get('/dokter/{id}/get-jam-operasional', [JamOperasionalDokterController::class, 'getJamOperasionalDokter'])->middleware(['auth:sanctum']);
-
+        Route::post('/petshop/{id}/create-jam-operasional', [JamOperasionalController::class, 'createJamOperasional'])->middleware(['auth:sanctum']);
+        Route::get('/petshop/{id}/get-jam-operasional-data', [JamOperasionalController::class, 'getJamOperasionalData'])->middleware(['auth:sanctum']);
+        Route::get('/petshop/{id}/get-jam-operasional', [JamOperasionalController::class, 'getJamOperasional'])->middleware(['auth:sanctum']);
+            //JAM OPERASIONAL
+            Route::post('/dokter/{id}/create-jam-operasional', [JamOperasionalDokterController::class, 'createJamOperasionalDokter'])->middleware(['auth:sanctum']);
+            Route::get('/dokter/{id}/get-jam-operasional-data', [JamOperasionalDokterController::class, 'getJamOperasionalDataDokter'])->middleware(['auth:sanctum']);
+            Route::get('/dokter/{id}/get-jam-operasional', [JamOperasionalDokterController::class, 'getJamOperasionalDokter'])->middleware(['auth:sanctum']);
 //PET
 Route::post('/add-pet', [PetController::class, 'addPet'])->middleware(['auth:sanctum']);
 Route::delete('/delete-pet/{id}', [PetController::class, 'deletePet'])->middleware(['auth:sanctum']);
@@ -107,3 +108,6 @@ Route::get('/get-product/{id}', [ProductController::class, 'getProduct'])->middl
 Route::delete('/delete-product/{id}', [ProductController::class, 'deleteProduct'])->middleware(['auth:sanctum']);
 Route::post('/edit-product/{id}', [ProductController::class, 'editProduct'])->middleware(['auth:sanctum']);
 Route::get('/product-form', [ProductController::class, 'getProductForm']);
+
+//ORDER
+Route::post('/create-order', [OrderController::class, 'store'])->middleware('auth:sanctum');
