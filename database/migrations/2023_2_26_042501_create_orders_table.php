@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('product_id')->nullable()->constrained('products');
             $table->foreignId('book_appoinment_id')->nullable()->constrained('book_appoinments');
             $table->string('type');
+            $table->string('transaction_id')->nullable();
             $table->string('status')->nullable();
             $table->unsignedBigInteger('gross_amount');
             $table->string('midtrans_token')->nullable();
