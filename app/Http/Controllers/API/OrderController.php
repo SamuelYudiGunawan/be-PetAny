@@ -119,7 +119,7 @@ class OrderController extends Controller
             $order->payment_type = $data->payment_type;
             $order->save();
     
-            return response()->json(['data' => $data], 200);
+            return response()->json(['status' => 'ok'], 200);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
