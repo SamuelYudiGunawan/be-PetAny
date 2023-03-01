@@ -94,29 +94,45 @@ class OrderController extends Controller
     public function handleMidtransNotification(Request $request)
     {
         try {
-            $json = $request->getContent();
-            $data = json_decode($json);
+            // $json = $request->getContent();
+            // $data = json_decode($json);
     
             // Retrieve the order using the order ID provided in the notification
-            $order = Order::findOrFail($data->order_id);
+            $order = Order::where('id', $request->order_id)->first();
 
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = hash('sha512', $data->order_id . $data->status_code . $data->gross_amount . Config::$serverKey);
+            $signatureKey = hash('sha512', $order->order_id . $request->status_code . $order->gross_amount . Config::$serverKey);
 
             // Verify the signature key
-            if ($signatureKey !== $data->signature_key) {
+            if ($signatureKey != $request->signature_key) {
                 Log::error('Invalid signature key');
                 return response()->json([
                     'error' => 'Invalid signature key'
                 ], 400);
             }
 
-            $order->transaction_id = $data->transaction_id;
-            $order->transaction_status = $data->transaction_status; 
-            $order->status_code = $data->status_code;
-            $order->json_data = $data;
+            $order->transaction_id = $request->transaction_id;
+            $order->status_code = $request->status_code;
+            $order->json_data = json_encode($request->all());
             $order->signarute_key = $signatureKey;
-            $order->payment_type = $data->payment_type;
+            $order->payment_type = $request->payment_type;
+            $transactionStatus = $data['transaction_status'];
+            switch ($transactionStatus) {
+                case 'pending':
+                    $order->transaction_status = 'waiting_payment';
+                    break;
+                case 'settlement':
+                    $order->transaction_status = 'paid';
+                    break;
+                case 'cancel':
+                    $order->transaction_status = 'cancelled';
+                    break;
+                case 'expire':
+                    $order->transaction_status = 'expired';
+                    break;
+                default:
+                    break;
+            }
             $order->save();
     
             return response()->json(['status' => 'ok'], 200);
