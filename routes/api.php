@@ -111,4 +111,4 @@ Route::get('/product-form', [ProductController::class, 'getProductForm']);
 
 //ORDER
 Route::post('/create-order', [OrderController::class, 'store'])->middleware('auth:sanctum');
-Route::get('/get-request', [OrderController::class, 'getMidtransRequest']);
+Route::post('/midtrans/handle-notification', [OrderController::class, 'handleMidtransNotification']);
