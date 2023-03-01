@@ -57,17 +57,26 @@ class OrderController extends Controller
                     'gross_amount' => $order->gross_amount,
                 ],
             ];
-            $midtransSnapToken = Snap::getSnapToken($midtransParams);
+            // $midtransSnapToken = Snap::getSnapToken($midtransParams);
 
-            // Store the Midtrans token and transaction ID in the order
-            $order->midtrans_token = $midtransSnapToken;
-            $order->transaction_id = null; // The transaction ID will be set later
-            $order->save();
+            // // Store the Midtrans token and transaction ID in the order
+            // $order->midtrans_token = $midtransSnapToken;
+            // $order->transaction_id = null; // The transaction ID will be set later
+            // $order->save();
             
-            // Get the payment URL using the Snap::createTransactionUrl() method
-            $paymentUrl = Snap::createTransactionUrl($midtransSnapToken);
+            // // Get the payment URL using the Snap::createTransactionUrl() method
+            // $paymentUrl = Snap::createTransactionUrl($midtransSnapToken);
 
-            // Save the payment URL to the order
+            // // Save the payment URL to the order
+            // $order->payment_url = $paymentUrl;
+            // $order->save();
+
+            $midtransResponse = Snap::createTransaction($midtransParams);
+            $midtransSnapToken = $midtransResponse->token;
+            $paymentUrl = $midtransResponse->redirect_url;
+
+            // Store the Midtrans token, transaction ID, and payment URL in the order
+            $order->midtrans_token = $midtransSnapToken;
             $order->payment_url = $paymentUrl;
             $order->save();
 
