@@ -95,7 +95,7 @@ class OrderController extends Controller
     {
         try {
             $json = $request->getContent();
-            $data = json_decode($json, true);
+            $data = json_decode($json);
     
             // Retrieve the order using the order ID provided in the notification
             $order = Order::findOrFail($data->order_id);
@@ -104,7 +104,7 @@ class OrderController extends Controller
             $signatureKey = md5($order->id . $order->status_code . $order->gross_amount . Config::$serverKey);
 
             // Verify the signature key
-            if ($signatureKey !== $notification->signature_key) {
+            if ($signatureKey !== $data->signature_key) {
                 Log::error('Invalid signature key');
                 return response()->json([
                     'error' => 'Invalid signature key'
@@ -128,5 +128,4 @@ class OrderController extends Controller
             ], 500);
         }
     }
-    
 }
