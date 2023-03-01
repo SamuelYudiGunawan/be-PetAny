@@ -101,7 +101,7 @@ class OrderController extends Controller
             $order = Order::findOrFail($data->order_id);
 
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = hash('sha512', $data->order_id . $data->status_code . $data->gross_amount . Config::$serverKey);
+            $signatureKey = hash('sha512', $order->order_id . $order->status_code . $order->gross_amount . Config::$serverKey);
 
             // Verify the signature key
             if ($signatureKey !== $data->signature_key) {
@@ -119,7 +119,7 @@ class OrderController extends Controller
             $order->payment_type = $data->payment_type;
             $order->save();
     
-            return response()->json(['data' => $data]);
+            return response()->json(['data' => $data], 200);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
