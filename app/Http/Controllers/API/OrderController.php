@@ -98,7 +98,7 @@ class OrderController extends Controller
             $data = json_decode($json, true);
     
             // Retrieve the order using the order ID provided in the notification
-            $order = Order::findOrFail($notification->order_id);
+            $order = Order::findOrFail($data->order_id);
 
             // Construct the signature key using the order details and your merchant server key
             $signatureKey = md5($order->id . $order->status_code . $order->gross_amount . Config::$serverKey);
@@ -111,12 +111,12 @@ class OrderController extends Controller
                 ], 400);
             }
 
-            $order->transaction_id = $notification->transaction_id;
-            $order->transaction_status = $notification->transaction_status; 
-            $order->status_code = $notification->status_code;
+            $order->transaction_id = $data->transaction_id;
+            $order->transaction_status = $data->transaction_status; 
+            $order->status_code = $data->status_code;
             $order->json_data = $data;
             $order->signarute_key = $signatureKey;
-            $order->payment_type = $notification->payment_type;
+            $order->payment_type = $data->payment_type;
             $order->save();
     
             return response()->json(['data' => $data]);
