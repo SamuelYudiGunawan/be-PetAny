@@ -46,7 +46,7 @@ class OrderController extends Controller
                 'product_id' => $validatedData['product_id'] ?? null,
                 'book_appoinment_id' => $validatedData['book_appointment_id'] ?? null,
                 'type' => $validatedData['type'],
-                'status' => ($validatedData['type'] == 'product') ? 'waiting_confirmation' : null,
+                'product_status' => ($validatedData['type'] == 'product') ? 'waiting_confirmation' : null,
                 'gross_amount' =>  $grossAmount,
                 'payment_url' => null,
             ]);
