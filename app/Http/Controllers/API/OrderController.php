@@ -101,7 +101,7 @@ class OrderController extends Controller
             $order = Order::findOrFail($data->order_id);
 
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = md5($order->id . $order->status_code . $order->gross_amount . Config::$serverKey);
+            $signatureKey = md5($data->order_id . $data->status_code . $data->gross_amount . Config::$serverKey);
 
             // Verify the signature key
             if ($signatureKey !== $data->signature_key) {
