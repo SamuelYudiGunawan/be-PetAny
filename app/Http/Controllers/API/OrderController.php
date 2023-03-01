@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Midtrans\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -106,9 +107,9 @@ class OrderController extends Controller
 
             // Verify the signature key
             if ($signatureKey != $request->signature_key) {
-                Log::error('Invalid signature key');
                 return response()->json([
-                    'error' => 'Invalid signature key'
+                    'status' => false,
+                    'message' => 'Signature is Invalid',
                 ], 400);
             }
 
@@ -135,8 +136,6 @@ class OrderController extends Controller
                     break;
             }
             $order->save();
-    
-            return response()->json(['status' => 'ok'], 200);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
