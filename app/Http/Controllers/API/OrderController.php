@@ -119,21 +119,27 @@ class OrderController extends Controller
             $order->signarute_key = $signatureKey;
             $order->payment_type = $request->payment_type;
             $transactionStatus = $request->transaction_status;
-            switch ($transactionStatus) {
-                case 'pending':
-                    $order->transaction_status = 'waiting_payment';
-                    break;
-                case 'settlement':
-                    $order->transaction_status = 'paid';
-                    break;
-                case 'cancel':
-                    $order->transaction_status = 'cancelled';
-                    break;
-                case 'expire':
-                    $order->transaction_status = 'expired';
-                    break;
-                default:
-                    break;
+            // switch ($transactionStatus) {
+            //     case 'pending':
+            //         $order->transaction_status = 'waiting_payment';
+            //         break;
+            //     case 'settlement':
+            //         $order->transaction_status = 'paid';
+            //         break;
+            //     case 'cancel':
+            //         $order->transaction_status = 'cancelled';
+            //         break;
+            //     case 'expire':
+            //         $order->transaction_status = 'expired';
+            //         break;
+            //     default:
+            //         break;
+            // }
+            if ($request->transaction_status == 'settlement') {
+                $order->transaction_status = 'paid';
+            }
+            if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
+                $order->transaction_status = 'error';
             }
             $order->save();
         } catch (\Exception $e) {
