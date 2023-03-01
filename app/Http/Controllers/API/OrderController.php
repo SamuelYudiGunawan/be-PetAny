@@ -6,6 +6,7 @@ use Midtrans\Snap;
 use Midtrans\Config;
 use App\Models\Order;
 use App\Models\Product;
+use Midtrans\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -26,7 +27,6 @@ class OrderController extends Controller
             // Set 3DS transaction for credit card to true
             \Midtrans\Config::$is3ds = true;
 
-            // Validate the request data
             $validatedData = $request->validate([
                 'product_id' => 'sometimes|nullable|exists:products,id',
                 'book_appointment_id' => 'sometimes|nullable|exists:book_appointments,id',
@@ -41,7 +41,6 @@ class OrderController extends Controller
                 $grossAmount = 15000;
             }
 
-            // Create a new order
             $order = Order::create([
                 'user_id' => Auth::user()->id,
                 'product_id' => $validatedData['product_id'] ?? null,
@@ -49,9 +48,9 @@ class OrderController extends Controller
                 'type' => $validatedData['type'],
                 'status' => ($validatedData['type'] == 'product') ? 'waiting_confirmation' : null,
                 'gross_amount' =>  $grossAmount,
+                'payment_url' => null,
             ]);
-
-            // Create a Midtrans transaction
+            
             $midtransParams = [
                 'transaction_details' => [
                     'order_id' => $order->id,
@@ -64,9 +63,16 @@ class OrderController extends Controller
             $order->midtrans_token = $midtransSnapToken;
             $order->transaction_id = null; // The transaction ID will be set later
             $order->save();
+            
+            // Get the payment URL using the Snap::createTransactionUrl() method
+            $paymentUrl = Snap::createTransactionUrl($midtransSnapToken);
+
+            // Save the payment URL to the order
+            $order->payment_url = $paymentUrl;
+            $order->save();
 
             // Return the Midtrans Snap token to the client
-            return response()->json(['data' => $order]);
+            return response()->json(['data' => ['midtrans_token' => $midtransSnapToken, 'payment_url' => $paymentUrl]]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
@@ -75,4 +81,43 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+    public function handleMidtransNotification(Request $request)
+    {
+        try {
+            $json = $request->getContent();
+            $data = json_decode($json, true);
+    
+            // Retrieve the order using the order ID provided in the notification
+            $order = Order::findOrFail($notification->order_id);
+
+            // Construct the signature key using the order details and your merchant server key
+            $signatureKey = md5($order->id . $order->status_code . $order->gross_amount . Config::$serverKey);
+
+            // Verify the signature key
+            if ($signatureKey !== $notification->signature_key) {
+                Log::error('Invalid signature key');
+                return response()->json([
+                    'error' => 'Invalid signature key'
+                ], 400);
+            }
+
+            $order->transaction_id = $notification->transaction_id;
+            $order->transaction_status = $notification->transaction_status; 
+            $order->status_code = $notification->status_code;
+            $order->json_data = $data;
+            $order->signarute_key = $signatureKey;
+            $order->payment_type = $notification->payment_type;
+            $order->save();
+    
+            return response()->json(['data' => $data]);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+    
 }
