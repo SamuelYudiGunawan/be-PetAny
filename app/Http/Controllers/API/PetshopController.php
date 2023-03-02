@@ -73,7 +73,10 @@ class PetshopController extends Controller
             'petshop_address' => $request->petshop_address,
             'user_id' => Auth::user()->id,
         ]);
-        Auth::user()->assignRole('petshop_staff');
+        Auth::user()->assignRole(['petshop_staff', 'petshop_owner']);
+        Auth::user()->update([
+            'petshop_id' => $petshop->id,
+        ]);
         return response()->json([
             'data' => $petshop,
         ]);
@@ -90,6 +93,7 @@ class PetshopController extends Controller
     {
         // Validate the request data
         $request->validate([
+            'petshop_name' => 'nullable|string',
             'description' => 'nullable|string',
             'website' => 'nullable|url',
             'category' => 'nullable|array',
@@ -100,6 +104,7 @@ class PetshopController extends Controller
             $petshop = Petshop::findOrFail($id);
             // Get the petshop record based on the provided ID, or create a new one if it doesn't exist
             $petshop->update([
+                'petshop_name' => $request->petshop_name,
                 'description' => $request->description,
                 'website' => $request->website,
                 'category' => $request->category,
@@ -138,6 +143,9 @@ class PetshopController extends Controller
                     'postal_code' => $d->postal_code,
                     'petshop_address' => $d->petshop_address,
                     'status'=>$d->status,
+                    'website'=>$d->website,
+                    'description'=>$d->description,
+                    'category'=>$d->category,
                     'links' => [
                         'self' => '/api/get-petshop/' . $d->id,
                     ],
@@ -211,6 +219,10 @@ class PetshopController extends Controller
     
                 Staff::create([
                     'user_id' => $user->id,
+                    'petshop_id' => $request->petshop_id,
+                ]);
+
+                Auth::user()->update([
                     'petshop_id' => $request->petshop_id,
                 ]);
     
@@ -302,6 +314,10 @@ class PetshopController extends Controller
             if ($staff) {
                 $staff->delete();
             }
+
+            Auth::user()->update([
+                'petshop_id' => null,
+            ]);
         
             return response()->json([
                 'message' => 'Petshop staff role removed successfully.',
@@ -385,6 +401,47 @@ class PetshopController extends Controller
                 'label' => 'DetaiL Alamat',
                 'required' => true,
             ],
+        ];
+    }
+    public function editPetshopForm()
+    {
+        return [
+            [
+                'name' => 'petshop_name',
+                'type' => 'text',
+                'label' => 'Nama Klinik',
+                'required' => false,
+            ],
+            [
+                'name' => 'description',
+                'type' => 'text',
+                'label' => 'Deskripsi Toko',
+                'required' => false,
+            ],
+                        [
+                'name' => 'webstite',
+                'type' => 'text',
+                'label' => 'Link Website Toko',
+                'required' => false,
+            ],
+            [
+                'name' => 'category',
+                'type' => 'array',
+                'label' => 'Layanan Kami',
+                'required' => false,
+            ],
+            // [
+            //     'name' => 'petshop_email',
+            //     'type' => 'email',
+            //     'label' => 'Email Klinik',
+            //     'required' => false,
+            // ],
+            // [
+            //     'name' => 'phone_number',
+            //     'type' => 'number',
+            //     'label' => 'Nomor Telepon',
+            //     'required' => false,
+            // ],
         ];
     }
 }

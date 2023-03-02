@@ -47,6 +47,7 @@ class CreateRolesSeeder extends Seeder
         Role::create(['name' => 'product_manager']);
         Role::create(['name' => 'dokter']);
         Role::create(['name' => 'petshop_staff']);
+        Role::create(['name' => 'petshop_owner']);
         Role::create(['name' => 'customer']);
     }
 }

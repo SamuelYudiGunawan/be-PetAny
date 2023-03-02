@@ -45,7 +45,7 @@ class JamOperasionalDokterController extends Controller
 
     public function createJamOperasionalDokter(Request $request, $id){
         $request->validate([
-            'hari_buka.*' => 'required|integer|min:0|max:6',
+            'hari_buka.*' => 'required|string',
             'is_open.*' => 'required|boolean',
             'jam_buka.*' => 'required_if:is_open,true|date_format:H:i',
             'jam_tutup.*' => 'required_if:is_open,true|date_format:H:i|after:jam_buka',
