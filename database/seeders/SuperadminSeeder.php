@@ -22,6 +22,7 @@ class SuperadminSeeder extends Seeder
             'email' => 'superadmin@petany.com',
             'password' => Hash::make('qazwsxedc'),
             'phone_number' => '0895350785800',
+            'petshop_id' => null,
         ]);
         $user = User::where('email', 'superadmin@petany.com')->firstOrFail();
         $user->assignRole('admin'); 

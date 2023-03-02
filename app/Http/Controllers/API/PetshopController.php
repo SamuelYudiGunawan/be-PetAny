@@ -73,10 +73,15 @@ class PetshopController extends Controller
             'petshop_address' => $request->petshop_address,
             'user_id' => Auth::user()->id,
         ]);
+
+        
         Auth::user()->assignRole(['petshop_staff', 'petshop_owner']);
-        Auth::user()->update([
-            'petshop_id' => $petshop->id,
-        ]);
+        $user = Auth::user();
+        // Auth::user()->update([
+        //     'petshop_id' => $petshop->id,
+        // ]);
+        $user->petshop_id = $petshop->id;
+        $user->save();
         return response()->json([
             'data' => $petshop,
         ]);
