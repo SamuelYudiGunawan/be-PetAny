@@ -28,13 +28,15 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => $request->password,
             'phone_number' => $request->phone_number,
+            'petshop_id' => null,
         ]);
-
         $user->assignRole('customer');
 
         $token = $user->createToken('Token-Register')->plainTextToken;
 
         event(new Registered($user));
+
+        $user = User::where('email', $request->email)->firstOrFail();
         
         return response()->json([
             'message' => 'Please check your email to verify your account.',
