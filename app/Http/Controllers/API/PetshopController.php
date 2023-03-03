@@ -171,6 +171,7 @@ class PetshopController extends Controller
     public function getPetshop($id){
         try {
             $data = Petshop::with('user_id:id,name')->find($id);
+            $data->category = json_decode($data->category, true);
         
             return response()->json([
                 'data' => $data,
@@ -314,11 +315,11 @@ class PetshopController extends Controller
         
             $user->removeRole('petshop_staff');
         
-            // $staff = Staff::where('user_id', $user->id)->first();
+            $staff = Staff::where('user_id', $user->id)->first();
         
-            // if ($staff) {
-            //     $staff->delete();
-            // }
+            if ($staff) {
+                $staff->delete();
+            }
 
             $user->petshop_id = $petshop->id;
             $user->save();
