@@ -221,15 +221,15 @@ class PetshopController extends Controller
                         'message' => 'Cannot add staff. The petshop already has the maximum number of staff.',
                     ], 400);
                 }
-    
+                
+                $userOwner = Auth::user();
                 Staff::create([
                     'user_id' => $user->id,
-                    'petshop_id' => $request->petshop_id,
+                    'petshop_id' => $userOwner->petshop_id,
                 ]);
 
-                Auth::user()->update([
-                    'petshop_id' => $request->petshop_id,
-                ]);
+                $user->petshop_id = $petshop->id;
+                $user->save();
     
                 if ($request->has('roles')) {
                     foreach ($request->roles as $role) {
@@ -314,15 +314,14 @@ class PetshopController extends Controller
         
             $user->removeRole('petshop_staff');
         
-            $staff = Staff::where('user_id', $user->id)->first();
+            // $staff = Staff::where('user_id', $user->id)->first();
         
-            if ($staff) {
-                $staff->delete();
-            }
+            // if ($staff) {
+            //     $staff->delete();
+            // }
 
-            Auth::user()->update([
-                'petshop_id' => null,
-            ]);
+            $user->petshop_id = $petshop->id;
+            $user->save();
         
             return response()->json([
                 'message' => 'Petshop staff role removed successfully.',
