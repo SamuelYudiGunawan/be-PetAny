@@ -126,7 +126,7 @@ class OrderController extends Controller
             $order = Order::where('id', $request->order_id)->first();
 
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = $order->orderId . $request->status_code . $order->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
+            $signatureKey = $order->order_id . $request->status_code . $order->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
             $signatureKey = hash('SHA512', $signatureKey);
 
             // Verify the signature key
