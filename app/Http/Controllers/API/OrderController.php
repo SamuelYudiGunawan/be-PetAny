@@ -7,13 +7,13 @@ use Midtrans\Config;
 use App\Models\Order;
 use App\Models\Product;
 use Midtrans\Notification;
-use App\Models\OrderPayment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\OrderPayment;
 
 class OrderController extends Controller
 {
@@ -102,35 +102,28 @@ class OrderController extends Controller
     {
         try {
             
-            $orderPayment = OrderPayment::where('order_detail_id', $request->order_id)->first();
+            // $orderPayment = OrderPayment::where('order_detail_id', $request->order_id)->first();
 
-            if (!$orderPayment) {
-                $orderPayment = new OrderPayment([
-                    'order_detail_id' => $request->order_id,
-                    'transaction_id' => $request->transaction_id,
-                    'status' => $request->transaction_status,
-                    'status_code' => $request->status_code,
-                    'payment_type' => $request->payment_type,
-                    'payment_amount' => $request->gross_amount,
-                    'json_data' => json_encode($request->all()),
-                ]);
-                $orderPayment->save();
+            // if (!$orderPayment) {
+            //     $orderPayment = new OrderPayment([
+            //         'order_detail_id' => $request->order_id,
+            //         'transaction_id' => $request->transaction_id,
+            //         'status' => $request->transaction_status,
+            //         'status_code' => $request->status_code,
+            //         'payment_type' => $request->payment_type,
+            //         'payment_amount' => $request->gross_amount,
+            //         'json_data' => json_encode($request->all()),
+            //     ]);
+            //     $orderPayment->save();
 
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Transaction has been created',
-                ], 201);
-            }
+            //     return response()->json([
+            //         'status' => true,
+            //         'message' => 'Transaction has been created',
+            //     ], 201);
+            // }
 
             // Retrieve the order using the order ID provided in the notification
-            // $order = Order::where('id', $request->order_id)->first();
-
-            // $order->transaction_id = $request->transaction_id;
-            // $order->status_code = $request->status_code;
-            // $order->json_data = json_encode($request->all());
-            // $order->signature_key = $signatureKey;
-            // $order->payment_type = $request->payment_type;
-            // $order->save();
+            $order = Order::where('id', $request->order_id)->first();
 
             // Construct the signature key using the order details and your merchant server key
             $signatureKey = $orderPayment->orderId . $request->status_code . $orderPayment->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
@@ -144,6 +137,12 @@ class OrderController extends Controller
                 ], 400);
             }
 
+            $order->transaction_id = $request->transaction_id;
+            $order->status_code = $request->status_code;
+            $order->json_data = json_encode($request->all());
+            $order->signature_key = $signatureKey;
+            $order->payment_type = $request->payment_type;
+            $order->save();
             // $order->update([
             //     'transaction_id' => $request->transaction_id,
             //     'status_code' => $request->status_code,
