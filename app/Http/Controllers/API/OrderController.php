@@ -9,6 +9,7 @@ use App\Models\Product;
 use Midtrans\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -34,9 +35,6 @@ class OrderController extends Controller
                 'type' => 'required|in:product,book_appointment',
                 'quantity' => 'nullable|integer|min:1',
             ]);
-
-            $orderProduct = 'PRODUCT_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
-            $orderBookAppointment = 'BOOK_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
 
             if ($validatedData['type'] === 'product') {
                 $product = Product::findOrFail($validatedData['product_id']);
