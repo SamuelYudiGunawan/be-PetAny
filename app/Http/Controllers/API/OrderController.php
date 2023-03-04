@@ -137,27 +137,28 @@ class OrderController extends Controller
                 ], 400);
             }
 
-            $order->transaction_id = $request->transaction_id;
-            $order->status_code = $request->status_code;
-            $order->json_data = json_encode($request->all());
-            $order->signature_key = $signatureKey;
-            $order->payment_type = $request->payment_type;
-            $order->save();
-            // $order->update([
-            //     'transaction_id' => $request->transaction_id,
-            //     'status_code' => $request->status_code,
-            //     'json_data' => json_encode($request->all()),
-            //     'signature_key' => $signatureKey,
-            //     'payment_type' => $request->payment_type,
-            //     'transaction_status' => ($request->transaction_status == 'settlement') ? 'paid' : 'error'
-            // ]);
+            // $order->transaction_id = $request->transaction_id;
             // $order->status_code = $request->status_code;
+            // $order->json_data = json_encode($request->all());
+            // $order->signature_key = $signatureKey;
+            // $order->payment_type = $request->payment_type;
             // if ($request->transaction_status == 'settlement') {
             //     $order->transaction_status = 'paid';
             // }
             // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
             //     $order->transaction_status = 'error';
             // }
+            // $order->save();
+            $order->update([
+                'transaction_id' => $request->transaction_id,
+                'status_code' => $request->status_code,
+                'json_data' => json_encode($request->all()),
+                'signature_key' => $signatureKey,
+                'payment_type' => $request->payment_type,
+                'transaction_status' => ($request->transaction_status == 'settlement') ? 'paid' : 'error'
+            ]);
+            // $order->status_code = $request->status_code;
+
             // $orderPayment->save();
             return response()->json([
                 'success' => true,
