@@ -113,7 +113,7 @@ class OrderController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Signature is Invalid',
-                ], 200);
+                ], 400);
             }
 
             $order->update([
