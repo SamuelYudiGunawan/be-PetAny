@@ -137,24 +137,25 @@ class OrderController extends Controller
                 ], 400);
             }
 
-            $order->transaction_id = $request->transaction_id;
-            $order->save();
-            $order->status_code = $request->status_code;
-            $order->save();
-            $order->json_data = json_encode($request->all());
-            $order->save();
-            $order->signature_key = $request->signature_key;
-            $order->save();
-            $order->payment_type = $request->payment_type;
-            $order->save();
-            $order->transaction_status = $request->transaction_status;
+            $updateOrder = Order::findOrFail($request->order_id);
+            $updateOrder->transaction_id = $request->transaction_id;
+            $updateOrder->save();
+            $updateOrder->status_code = $request->status_code;
+            $updateOrder->save();
+            $updateOrder->json_data = json_encode($request->all());
+            $updateOrder->save();
+            $updateOrder->signature_key = $request->signature_key;
+            $updateOrder->save();
+            $updateOrder->payment_type = $request->payment_type;
+            $updateOrder->save();
+            $updateOrder->transaction_status = $request->transaction_status;
             // if ($request->transaction_status == 'settlement') {
             //     $order->transaction_status = 'paid';
             // }
             // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
             //     $order->transaction_status = 'error';
             // }
-            $order->save();
+            $updateOrder->save();
             // $order->update([
             //     'transaction_id' => $request->transaction_id,
             //     'status_code' => $request->status_code,
