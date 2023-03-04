@@ -134,7 +134,7 @@ class OrderController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Signature is Invalid',
-                ], 200);
+                ], 400);
             }
             $order = Order::where('order_id', $request->order_id)->first();
             $order->transaction_id = $request->transaction_id;
