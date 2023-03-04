@@ -235,7 +235,7 @@ class PetController extends Controller
         }
     }
 
-    public function addMedicalRecord(Request $request, $id){
+    public function addMedicalRecord(Request $request){
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -281,7 +281,7 @@ class PetController extends Controller
         }
     }
 
-    public function editMedicalRecord(Request $request){
+    public function editMedicalRecord(Request $request, $id){
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -290,7 +290,7 @@ class PetController extends Controller
             'attachment.*' => 'required|file',
             'pet_id' => 'required|string'
         ]);
-        $medical_record = Pet::find($id);
+        $medical_record = MedicalRecord::find($id);
         if (!$medical_record) {
             return response()->json(['error' => 'Product not found.'], 404);
         }
