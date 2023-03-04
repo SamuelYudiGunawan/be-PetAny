@@ -35,11 +35,17 @@ class OrderController extends Controller
                 'quantity' => 'nullable|integer|min:1',
             ]);
 
+            $orderProduct = 'PRODUCT_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
+            $orderBookAppointment = 'BOOK_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
+
             if ($validatedData['type'] === 'product') {
                 $product = Product::findOrFail($validatedData['product_id']);
                 $grossAmount = $product->price * $validatedData['quantity'];
+                $orderId = 'PRODUCT_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
             } else {
                 $grossAmount = 15000;
+                $orderId = 'BOOK_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
+
             }
 
             $order = Order::create([
@@ -50,11 +56,12 @@ class OrderController extends Controller
                 'product_status' => ($validatedData['type'] == 'product') ? 'waiting_confirmation' : null,
                 'gross_amount' =>  $grossAmount,
                 'payment_url' => null,
+                'order_id' => $orderId,
             ]);
             
             $midtransParams = [
                 'transaction_details' => [
-                    'order_id' => $order->id,
+                    'order_id' => $orderId,
                     'gross_amount' => $order->gross_amount,
                 ],
             ];
@@ -100,7 +107,7 @@ class OrderController extends Controller
             $order = Order::where('id', $request->order_id)->first();
 
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = $order->id . $request->status_code . $order->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
+            $signatureKey = $order->orderId . $request->status_code . $order->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
             $signatureKey = hash('SHA512', $signatureKey);
 
             // Verify the signature key
