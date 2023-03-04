@@ -235,7 +235,7 @@ class PetController extends Controller
         }
     }
 
-    public function addMedicalRecord(Request $request){
+    public function addMedicalRecord(Request $request, $id){
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -280,6 +280,58 @@ class PetController extends Controller
             ], 500);
         }
     }
+
+    public function editMedicalRecord(Request $request){
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'treatment' => 'required|string',
+            'date' => 'required|date',
+            'attachment.*' => 'required|file',
+            'pet_id' => 'required|string'
+        ]);
+        $medical_record = Pet::find($id);
+        if (!$medical_record) {
+            return response()->json(['error' => 'Product not found.'], 404);
+        }
+    
+
+        try{
+        $attachment = null;
+        $filePath = null;
+        if ($request->hasFile('attachment')) {
+            $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('attachment')) . "." . $request->file('attachment')->getClientOriginalExtension();
+            $filePath = "storage/document/attachment/" . $fileName;
+            $request->attachment->storeAs(
+                "public/document/attachment",
+                $fileName
+            );
+            $attachment = url('/').'/'.$filePath;
+        }
+
+
+        $medical_record->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'treatment' => $request->treatment,
+            'date' => $request->date,
+            'attachment' => $attachment,
+            'pet_id' => $request->pet_id,
+        ]);
+
+        return response()->json([
+            'data' => $medical_record,
+        ]);
+        
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
     protected function getAllMedicalRecord(){
         try{
             $data = MedicalRecord::with('pet_id:id,pet_name')->get();

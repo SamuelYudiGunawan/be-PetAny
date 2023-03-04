@@ -88,6 +88,7 @@ Route::get('/pet-form', [PetController::class, 'getPetForm']);
 
 //MEDICAL RECORD
 Route::post('/add-medicalrecord', [PetController::class, 'addMedicalRecord'])->middleware(['auth:sanctum']);
+Route::post('/edit-medicalrecord/{id}', [PetController::class, 'editMedicalRecord'])->middleware(['auth:sanctum']);
 Route::get('/get-medicalrecord', [PetController::class, 'getAllMedicalRecord'])->middleware(['auth:sanctum']);
 Route::get('/get-medicalrecord/{id}', [PetController::class, 'getMedicalRecord'])->middleware(['auth:sanctum']);
 Route::delete('/delete-medicalrecord/{id}', [PetController::class, 'deleteMedicalRecord'])->middleware(['auth:sanctum']);
