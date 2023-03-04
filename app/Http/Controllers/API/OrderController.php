@@ -95,8 +95,6 @@ class OrderController extends Controller
     public function handleMidtransNotification(Request $request)
     {
         try {
-            // $json = $request->getContent();
-            // $data = json_decode($json);
     
             // Retrieve the order using the order ID provided in the notification
             $order = Order::where('id', $request->order_id)->first();
@@ -110,13 +108,13 @@ class OrderController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Signature is Invalid',
-                ], 400);
+                ], 200);
             }
 
             $order->transaction_id = $request->transaction_id;
             $order->status_code = $request->status_code;
             $order->json_data = json_encode($request->all());
-            $order->signarute_key = $signatureKey;
+            $order->signature_key = $signatureKey;
             $order->payment_type = $request->payment_type;
             // switch ($transactionStatus) {
             //     case 'pending':
@@ -141,12 +139,16 @@ class OrderController extends Controller
                 $order->transaction_status = 'error';
             }
             $order->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Order status updated successfully',
+            ], 200);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
             return response()->json([
                 'error' => $errorMessage
-            ], 500);
+            ], 200);
         }
     }
 }
