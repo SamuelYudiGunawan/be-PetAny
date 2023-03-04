@@ -128,7 +128,7 @@ class OrderController extends Controller
             $serverKey = "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
 
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = $order->order_id . $request->status_code . $order->gross_amount . $serverKey;
+            $signatureKey = $request->order_id . $request->status_code . $request->gross_amount . $serverKey;
             $signatureKey = hash('SHA512', $signatureKey);
 
             // Verify the signature key
