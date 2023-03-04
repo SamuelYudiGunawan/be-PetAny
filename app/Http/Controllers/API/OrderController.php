@@ -123,10 +123,10 @@ class OrderController extends Controller
             // }
 
             // Retrieve the order using the order ID provided in the notification
-            $order = Order::where('order_id', $request->order_id)->first();
+            $orderSignatureKey = Order::where('id', $request->order_id)->first();
 
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = $order->order_id . $request->status_code . $order->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
+            $signatureKey = $orderSignatureKey->order_id . $request->status_code . $orderSignatureKey->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
             $signatureKey = hash('SHA512', $signatureKey);
 
             // Verify the signature key
@@ -136,7 +136,7 @@ class OrderController extends Controller
                     'message' => 'Signature is Invalid',
                 ], 200);
             }
-
+            $order = Order::where('order_id', $request->order_id)->first();
             $order->transaction_id = $request->transaction_id;
             $order->status_code = $request->status_code;
             $order->json_data = json_encode($request->all());
