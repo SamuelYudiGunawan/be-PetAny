@@ -151,14 +151,14 @@ class OrderController extends Controller
             //     'payment_type' => $request->payment_type,
             //     'transaction_status' => ($request->transaction_status == 'settlement') ? 'paid' : 'error'
             // ]);
-            $orderPayment->status_code = $request->status_code;
-            if ($request->transaction_status == 'settlement') {
-                $order->transaction_status = 'paid';
-            }
-            if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
-                $order->transaction_status = 'error';
-            }
-            $orderPayment->save();
+            // $order->status_code = $request->status_code;
+            // if ($request->transaction_status == 'settlement') {
+            //     $order->transaction_status = 'paid';
+            // }
+            // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
+            //     $order->transaction_status = 'error';
+            // }
+            // $orderPayment->save();
             return response()->json([
                 'success' => true,
                 'message' => 'Order status updated successfully',
