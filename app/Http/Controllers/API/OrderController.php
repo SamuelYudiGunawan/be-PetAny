@@ -141,19 +141,19 @@ class OrderController extends Controller
             // $order = Order::where('order_id', $request->order_id)->first();
 
 
-            // $order->transaction_id = $request->transaction_id;
-            // $order->status_code = $request->status_code;
-            // $order->json_data = json_encode($request->all());
-            // $order->signature_key = $request->signature_key;
-            // $order->payment_type = $request->payment_type;
-            // $order->transaction_status = $request->transaction_status;
-            // // if ($request->transaction_status == 'settlement') {
-            // //     $order->transaction_status = 'paid';
-            // // }
-            // // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
-            // //     $order->transaction_status = 'error';
-            // // }
-            // $order->save();
+            $order->transaction_id = $request->transaction_id;
+            $order->status_code = $request->status_code;
+            $order->json_data = json_encode($request->all());
+            $order->signature_key = $request->signature_key;
+            $order->payment_type = $request->payment_type;
+            $order->transaction_status = $request->transaction_status;
+            // if ($request->transaction_status == 'settlement') {
+            //     $order->transaction_status = 'paid';
+            // }
+            // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
+            //     $order->transaction_status = 'error';
+            // }
+            $order->save();
 
 
             // $order->update([
