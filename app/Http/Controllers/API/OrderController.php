@@ -164,13 +164,13 @@ class OrderController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Order status updated successfully',
-            ], 400);
+            ], 200);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
             return response()->json([
                 'error' => $errorMessage
-            ], 200);
+            ], 400);
         }
     }
 }
