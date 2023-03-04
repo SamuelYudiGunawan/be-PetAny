@@ -48,16 +48,6 @@ class PetshopController extends Controller
             );
             array_push($filePaths, url('/').'/'.$filePath);
         }
-        
-        if ($request->hasFile('petshop_image')) {
-            $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('petshop_image')) . "." . $request->file('petshop_image')->getClientOriginalExtension();
-            $imagePath = "storage/document/petshop_image/" . $imageName;
-            $request->petshop_image->storeAs(
-                "public/document/petshop_image",
-                $imageName
-            );
-            $petshop_image = url('/').'/'.$imagePath;
-        }
 
         $petshop = Petshop::create([
             'petshop_name' => $request->petshop_name,
@@ -99,6 +89,7 @@ class PetshopController extends Controller
         // Validate the request data
         $request->validate([
             'petshop_name' => 'nullable|string',
+            'petshop_image' => 'nullable|file',
             'description' => 'nullable|string',
             'website' => 'nullable|url',
             'category' => 'nullable|array',
@@ -107,9 +98,20 @@ class PetshopController extends Controller
 
         try {
             $petshop = Petshop::findOrFail($id);
+
+            if ($request->hasFile('petshop_image')) {
+                $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('petshop_image')) . "." . $request->file('petshop_image')->getClientOriginalExtension();
+                $imagePath = "storage/document/petshop_image/" . $imageName;
+                $request->petshop_image->storeAs(
+                    "public/document/petshop_image",
+                    $imageName
+                );
+                $petshop_image = url('/').'/'.$imagePath;
+            }
             // Get the petshop record based on the provided ID, or create a new one if it doesn't exist
             $petshop->update([
                 'petshop_name' => $request->petshop_name,
+                'petshop_image' => $petshop_image,
                 'description' => $request->description,
                 'website' => $request->website,
                 'category' => $request->category,
@@ -150,15 +152,15 @@ class PetshopController extends Controller
                     'status'=>$d->status,
                     'website'=>$d->website,
                     'description'=>$d->description,
-                    'category'=>$d->category,
+                    'category'=>json_decode($d->category),
                     'links' => [
                         'self' => '/api/get-petshop/' . $d->id,
                     ],
                 ]);
             }
-        return response()->json([
+        return response()->json(
             $response
-        ]);
+        );
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
