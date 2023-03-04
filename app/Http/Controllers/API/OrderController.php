@@ -134,7 +134,7 @@ class OrderController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Signature is Invalid',
-                ], 400);
+                ], 200);
             }
 
             $order->transaction_id = $request->transaction_id;
