@@ -104,6 +104,19 @@ class OrderController extends Controller
             // Retrieve the order using the order ID provided in the notification
             $order = Order::where('id', $request->order_id)->first();
 
+            $order->transaction_id = $request->transaction_id;
+            $order->status_code = $request->status_code;
+            $order->json_data = json_encode($request->all());
+            $order->signature_key = $signatureKey;
+            $order->payment_type = $request->payment_type;
+            if ($request->transaction_status == 'settlement') {
+                $order->transaction_status = 'paid';
+            }
+            if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
+                $order->transaction_status = 'error';
+            }
+            $order->save();
+
             // Construct the signature key using the order details and your merchant server key
             $signatureKey = $order->orderId . $request->status_code . $order->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
             $signatureKey = hash('SHA512', $signatureKey);
@@ -116,27 +129,16 @@ class OrderController extends Controller
                 ], 400);
             }
 
-            $order->update([
-                'transaction_id' => $request->transaction_id,
-                'status_code' => $request->status_code,
-                'json_data' => json_encode($request->all()),
-                'signature_key' => $signatureKey,
-                'payment_type' => $request->payment_type,
-                'transaction_status' => ($request->transaction_status == 'settlement') ? 'paid' : 'error'
-            ]);
+            // $order->update([
+            //     'transaction_id' => $request->transaction_id,
+            //     'status_code' => $request->status_code,
+            //     'json_data' => json_encode($request->all()),
+            //     'signature_key' => $signatureKey,
+            //     'payment_type' => $request->payment_type,
+            //     'transaction_status' => ($request->transaction_status == 'settlement') ? 'paid' : 'error'
+            // ]);
 
-            // $order->transaction_id = $request->transaction_id;
-            // $order->status_code = $request->status_code;
-            // $order->json_data = json_encode($request->all());
-            // $order->signature_key = $signatureKey;
-            // $order->payment_type = $request->payment_type;
-            // if ($request->transaction_status == 'settlement') {
-            //     $order->transaction_status = 'paid';
-            // }
-            // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
-            //     $order->transaction_status = 'error';
-            // }
-            // $order->save();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Order status updated successfully',
