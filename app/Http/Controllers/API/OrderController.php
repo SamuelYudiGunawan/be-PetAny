@@ -100,25 +100,39 @@ class OrderController extends Controller
     public function handleMidtransNotification(Request $request)
     {
         try {
-    
-            // Retrieve the order using the order ID provided in the notification
-            $order = Order::where('id', $request->order_id)->first();
+            
+            $orderPayment = OrderPayment::where('order_detail_id', $request->order_id)->first();
 
-            $order->transaction_id = $request->transaction_id;
-            $order->status_code = $request->status_code;
-            $order->json_data = json_encode($request->all());
-            $order->signature_key = $signatureKey;
-            $order->payment_type = $request->payment_type;
-            if ($request->transaction_status == 'settlement') {
-                $order->transaction_status = 'paid';
+            if (!$orderPayment) {
+                $orderPayment = new OrderPayment([
+                    'order_detail_id' => $request->order_id,
+                    'transaction_id' => $request->transaction_id,
+                    'status' => $request->transaction_status,
+                    'status_code' => $request->status_code,
+                    'payment_type' => $request->payment_type,
+                    'payment_amount' => $request->gross_amount,
+                    'json_data' => json_encode($request->all()),
+                ]);
+                $orderPayment->save();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Transaction has been created',
+                ], 201);
             }
-            if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
-                $order->transaction_status = 'error';
-            }
-            $order->save();
+
+            // Retrieve the order using the order ID provided in the notification
+            // $order = Order::where('id', $request->order_id)->first();
+
+            // $order->transaction_id = $request->transaction_id;
+            // $order->status_code = $request->status_code;
+            // $order->json_data = json_encode($request->all());
+            // $order->signature_key = $signatureKey;
+            // $order->payment_type = $request->payment_type;
+            // $order->save();
 
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = $order->orderId . $request->status_code . $order->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
+            $signatureKey = $orderPayment->orderId . $request->status_code . $orderPayment->gross_amount .  "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
             $signatureKey = hash('SHA512', $signatureKey);
 
             // Verify the signature key
@@ -137,8 +151,14 @@ class OrderController extends Controller
             //     'payment_type' => $request->payment_type,
             //     'transaction_status' => ($request->transaction_status == 'settlement') ? 'paid' : 'error'
             // ]);
-
-
+            $orderPayment->status_code = $request->status_code;
+            if ($request->transaction_status == 'settlement') {
+                $order->transaction_status = 'paid';
+            }
+            if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
+                $order->transaction_status = 'error';
+            }
+            $orderPayment->save();
             return response()->json([
                 'success' => true,
                 'message' => 'Order status updated successfully',
