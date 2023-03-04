@@ -136,7 +136,7 @@ class OrderController extends Controller
             // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
             //     $order->transaction_status = 'error';
             // }
-            $order->save();
+            // $order->save();
             return response()->json([
                 'success' => true,
                 'message' => 'Order status updated successfully',
@@ -146,7 +146,7 @@ class OrderController extends Controller
             Log::error($errorMessage);
             return response()->json([
                 'error' => $errorMessage
-            ], 200);
+            ], 400);
         }
     }
 }
