@@ -169,7 +169,7 @@ class OrderController extends Controller
             Log::error($errorMessage);
             return response()->json([
                 'error' => $errorMessage
-            ], 400);
+            ], 200);
         }
     }
 }
