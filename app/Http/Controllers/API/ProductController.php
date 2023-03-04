@@ -31,9 +31,9 @@ class ProductController extends Controller
             "public/document/product_image",
             $imageName
         );
-
+        $user = Auth::user();
         $product = Product::create([
-            'petshop_id' => $request->petshop_id,
+            'petshop_id' => $user->petshop_id,
             'name' => $request->name,
             'description' => $request->description,
             'image' => url('/').'/'.$imagePath,

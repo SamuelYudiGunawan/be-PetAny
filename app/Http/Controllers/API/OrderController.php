@@ -118,7 +118,6 @@ class OrderController extends Controller
             $order->json_data = json_encode($request->all());
             $order->signarute_key = $signatureKey;
             $order->payment_type = $request->payment_type;
-            $transactionStatus = $request->transaction_status;
             // switch ($transactionStatus) {
             //     case 'pending':
             //         $order->transaction_status = 'waiting_payment';
