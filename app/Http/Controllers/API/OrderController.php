@@ -152,10 +152,10 @@ class OrderController extends Controller
             $order->update([
                 'transaction_id' => $request->transaction_id,
                 'status_code' => $request->status_code,
-                'json_data' => json_encode($request->all()),
-                'signature_key' => $signatureKey,
+                'json_data' => 'test',
+                'signature_key' => $request->signature_key,
                 'payment_type' => $request->payment_type,
-                'transaction_status' => ($request->transaction_status == 'settlement') ? 'paid' : 'error'
+                'transaction_status' => $request->transaction_status,
             ]);
             // $order->status_code = $request->status_code;
 
@@ -163,7 +163,7 @@ class OrderController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Order status updated successfully',
-            ], 200);
+            ], 400);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
