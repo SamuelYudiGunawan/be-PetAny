@@ -116,33 +116,26 @@ class OrderController extends Controller
                 ], 200);
             }
 
-            $order->transaction_id = $request->transaction_id;
-            $order->status_code = $request->status_code;
-            $order->json_data = json_encode($request->all());
-            $order->signature_key = $signatureKey;
-            $order->payment_type = $request->payment_type;
-            // switch ($transactionStatus) {
-            //     case 'pending':
-            //         $order->transaction_status = 'waiting_payment';
-            //         break;
-            //     case 'settlement':
-            //         $order->transaction_status = 'paid';
-            //         break;
-            //     case 'cancel':
-            //         $order->transaction_status = 'cancelled';
-            //         break;
-            //     case 'expire':
-            //         $order->transaction_status = 'expired';
-            //         break;
-            //     default:
-            //         break;
+            $order->update([
+                'transaction_id' => $request->transaction_id,
+                'status_code' => $request->status_code,
+                'json_data' => json_encode($request->all()),
+                'signature_key' => $signatureKey,
+                'payment_type' => $request->payment_type,
+                'transaction_status' => ($request->transaction_status == 'settlement') ? 'paid' : 'error'
+            ]);
+
+            // $order->transaction_id = $request->transaction_id;
+            // $order->status_code = $request->status_code;
+            // $order->json_data = json_encode($request->all());
+            // $order->signature_key = $signatureKey;
+            // $order->payment_type = $request->payment_type;
+            // if ($request->transaction_status == 'settlement') {
+            //     $order->transaction_status = 'paid';
             // }
-            if ($request->transaction_status == 'settlement') {
-                $order->transaction_status = 'paid';
-            }
-            if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
-                $order->transaction_status = 'error';
-            }
+            // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
+            //     $order->transaction_status = 'error';
+            // }
             $order->save();
             return response()->json([
                 'success' => true,
