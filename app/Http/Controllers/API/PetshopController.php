@@ -107,11 +107,12 @@ class PetshopController extends Controller
                     $imageName
                 );
                 $petshop_image = url('/').'/'.$imagePath;
+                $petshop_image = json_encode($petshop_image);
             }
             // Get the petshop record based on the provided ID, or create a new one if it doesn't exist
             $petshop->update([
                 'petshop_name' => $request->petshop_name,
-                'petshop_image' => json_encode($petshop_image),
+                'petshop_image' => $petshop_image,
                 'description' => $request->description,
                 'website' => $request->website,
                 'category' => $request->category,
