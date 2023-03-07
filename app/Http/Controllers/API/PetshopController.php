@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Staff;
 use App\Models\Petshop;
 use Illuminate\Http\Request;
+use App\Models\JamOperasional;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -133,11 +134,23 @@ class PetshopController extends Controller
         }
     }
 
-    public function getAllPetshop(){
-        try{
+    public function getAllPetshop()
+    {
+        try {
             $data = Petshop::with('user_id:id,name')->get();
             $response = [];
             foreach ($data as $d) {
+                $store = JamOperasional::where('hari_buka', Carbon::now()->locale('id')->translatedFormat('l'))->first(); // mencari data toko berdasarkan hari saat ini
+                $isOpen = false;
+                // dd($store);
+                if ($store) {
+                    $openTime = Carbon::parse($store->jam_buka);
+                    $closeTime = Carbon::parse($store->jam_tutup);
+                    $currentTime = Carbon::now()->setTimezone('Asia/Jakarta');
+                    if ($currentTime->between($openTime, $closeTime) && $store->is_open) {
+                        $isOpen = true;
+                    }
+                }
                 array_push($response, [
                     'petshop_name' => $d->petshop_name,
                     'user_id' => $d->user_id,
@@ -151,18 +164,17 @@ class PetshopController extends Controller
                     'city' => $d->city,
                     'postal_code' => $d->postal_code,
                     'petshop_address' => $d->petshop_address,
-                    'status'=>$d->status,
-                    'website'=>$d->website,
-                    'description'=>$d->description,
-                    'category'=>json_decode($d->category),
+                    'status' => $d->status,
+                    'website' => $d->website,
+                    'description' => $d->description,
+                    'category' => json_decode($d->category),
+                    'is_open' => $isOpen, // menambahkan field is_open
                     'links' => [
                         'self' => '/api/get-petshop/' . $d->id,
                     ],
                 ]);
             }
-        return response()->json(
-            $response
-        );
+            return response()->json($response);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
@@ -172,13 +184,41 @@ class PetshopController extends Controller
         }
     }
 
+
     public function getPetshop($id){
         try {
-            $data = Petshop::with('user_id:id,name')->find($id);
-            $data->category = json_decode($data->category, true);
-        
+            $d = Petshop::with('user_id:id,name')->find($id);
+            $store = JamOperasional::where('hari_buka', Carbon::now()->locale('id')->translatedFormat('l'))->first(); // mencari data toko berdasarkan hari saat ini
+                $isOpen = false;
+                // dd($store);
+                if ($store) {
+                    $openTime = Carbon::parse($store->jam_buka);
+                    $closeTime = Carbon::parse($store->jam_tutup);
+                    $currentTime = Carbon::now()->setTimezone('Asia/Jakarta');
+                    if ($currentTime->between($openTime, $closeTime) && $store->is_open) {
+                        $isOpen = true;
+                    }
+                }
             return response()->json([
-                'data' => $data,
+                'data' => [
+                    'petshop_name' => $d->petshop_name,
+                    'user_id' => $d->user_id,
+                    'petshop_image' => $d->petshop_image,
+                    'company_name' => $d->company_name,
+                    'district' => $d->district,
+                    'phone_number' => $d->phone_number,
+                    'petshop_email' => $d->petshop_email,
+                    'permit.*' => $d->permit,
+                    'province' => $d->province,
+                    'city' => $d->city,
+                    'postal_code' => $d->postal_code,
+                    'petshop_address' => $d->petshop_address,
+                    'status' => $d->status,
+                    'website' => $d->website,
+                    'description' => $d->description,
+                    'category' => json_decode($d->category),
+                    'is_open' => $isOpen, // menambahkan field is_open
+                ],
             ]);
         } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
