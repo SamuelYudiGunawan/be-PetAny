@@ -78,7 +78,9 @@ class PetController extends Controller
                     "public/document/pet_image",
                     $imageName
                 );
-                $pet->pet_image = url('/').'/'.$imagePath;
+                $pet_image = $pet->pet_image = url('/').'/'.$imagePath;
+                $pet->pet_image = $pet_image;
+                $pet->save();
             }
     
             $pet::where('id', $id)->update([
@@ -88,7 +90,7 @@ class PetController extends Controller
                 'pet_genus' => $request->pet_genus,
                 'pet_species' => $request->pet_species,
                 'weight' => $request->weight,
-                'pet_image' => $request->hasFile('pet_image') ? url('/').'/'.$imagePath : $pet->pet_image,
+                // 'pet_image' => $request->hasFile('pet_image') ? url('/').'/'.$imagePath : $pet->pet_image,
             ]);
     
             return response()->json([
@@ -307,6 +309,8 @@ class PetController extends Controller
                 $fileName
             );
             $attachment = url('/').'/'.$filePath;
+            $medical_record->attachment = $attachment;
+            $medical_record->save();
         }
 
 
@@ -315,7 +319,7 @@ class PetController extends Controller
             'description' => $request->description,
             'treatment' => $request->treatment,
             'date' => $request->date,
-            'attachment' => $attachment,
+            // 'attachment' => $attachment,
             'pet_id' => $request->pet_id,
         ]);
 
