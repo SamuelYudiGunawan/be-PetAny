@@ -70,11 +70,11 @@ Route::get('/petshop-form', [PetshopController::class, 'getPetshopForm']);
     Route::post('/add-staff', [PetshopController::class, 'addStaff'])->middleware(['auth:sanctum']);
     Route::delete('/remove-role', [PetshopController::class, 'removeRole'])->middleware(['auth:sanctum']);;
     Route::delete('/remove-staff', [PetshopController::class, 'removePetshopStaff'])->middleware(['auth:sanctum']);;
-        //JAM OPERASIONAL
+        //JAM OPERASIONAL PETSHOP
         Route::post('/petshop/create-jam-operasional/{id}', [JamOperasionalController::class, 'createJamOperasional'])->middleware(['auth:sanctum']);
         Route::get('/petshop/get-jam-operasional-data/{id}', [JamOperasionalController::class, 'getJamOperasionalData'])->middleware(['auth:sanctum']);
         Route::get('/petshop/get-jam-operasional/{id}', [JamOperasionalController::class, 'getJamOperasional'])->middleware(['auth:sanctum']);
-            //JAM OPERASIONAL
+            //JAM OPERASIONAL DOKTER
             Route::post('/dokter/create-jam-operasional/{id}', [JamOperasionalDokterController::class, 'createJamOperasionalDokter'])->middleware(['auth:sanctum']);
             Route::get('/dokter/get-jam-operasional-data/{id}', [JamOperasionalDokterController::class, 'getJamOperasionalDataDokter'])->middleware(['auth:sanctum']);
             Route::get('/dokter/get-jam-operasional/{id}', [JamOperasionalDokterController::class, 'getJamOperasionalDokter'])->middleware(['auth:sanctum']);
