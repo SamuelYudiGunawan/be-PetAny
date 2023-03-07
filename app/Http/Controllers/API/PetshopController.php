@@ -168,7 +168,10 @@ class PetshopController extends Controller
                     'website' => $d->website,
                     'description' => $d->description,
                     'category' => json_decode($d->category),
-                    'is_open' => $isOpen, // menambahkan field is_open
+                    'is_open' => [
+                        'is_open' => $isOpen,
+                        'jam_operasional' => $store
+                    ], 
                     'links' => [
                         'self' => '/api/get-petshop/' . $d->id,
                     ],
@@ -217,7 +220,10 @@ class PetshopController extends Controller
                     'website' => $d->website,
                     'description' => $d->description,
                     'category' => json_decode($d->category),
-                    'is_open' => $isOpen, // menambahkan field is_open
+                    'is_open' => [
+                        'is_open' => $isOpen,
+                        'jam_operasional' => $store
+                    ], // menambahkan field is_open
                 ],
             ]);
         } catch (\Throwable $e) {
