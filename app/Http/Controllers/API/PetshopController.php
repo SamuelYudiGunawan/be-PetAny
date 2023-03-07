@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Staff;
 use App\Models\Petshop;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use App\Models\JamOperasional;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -137,20 +139,32 @@ class PetshopController extends Controller
     public function getAllPetshop()
     {
         try {
-            $data = Petshop::with('user_id:id,name')->get();
+            // $data = Petshop::with(['user_id:id,name', 'jamOperasional'])->get();
+            $subquery = DB::table('jam_operasionals')
+                ->select('petshop_id', DB::raw('MAX(jam_buka) AS jam_buka'), DB::raw('MAX(jam_tutup) AS jam_tutup'), DB::raw('MAX(hari_buka) AS hari_buka'))
+                ->where('hari_buka', Carbon::now()->locale('id')->translatedFormat('l'))
+                ->groupBy('petshop_id');
+
+            $data = Petshop::leftJoinSub($subquery, 'jam_operasionals', function($join) {
+                    $join->on('petshops.id', '=', 'jam_operasionals.petshop_id');
+                })
+                ->select('petshops.*', DB::raw('IFNULL(DATE_FORMAT(jam_operasionals.jam_buka,"%H:%i"), null) AS jam_buka'), DB::raw('IFNULL(DATE_FORMAT(jam_operasionals.jam_tutup,"%H:%i"), null) AS jam_tutup'),  DB::raw('IFNULL(jam_operasionals.hari_buka, null) AS hari_buka'))
+                ->get();
             $response = [];
+            // $isOpen = false;
             foreach ($data as $d) {
-                $store = JamOperasional::where('hari_buka', Carbon::now()->locale('id')->translatedFormat('l'))->first(); // mencari data toko berdasarkan hari saat ini
-                $isOpen = false;
-                // dd($store);
-                if ($store) {
-                    $openTime = Carbon::parse($store->jam_buka);
-                    $closeTime = Carbon::parse($store->jam_tutup);
-                    $currentTime = Carbon::now()->setTimezone('Asia/Jakarta');
-                    if ($currentTime->between($openTime, $closeTime) && $store->is_open) {
-                        $isOpen = true;
-                    }
-                }
+                // // $isOpen = false;
+                // if ($d->hari_buka) {
+                //     $openTime = $d->jam_buka;
+                //     $closeTime = $d->jam_tutup;
+                //     $currentTime = Carbon::now()->setTimezone('Asia/Jakarta');
+                //     // $currentTime = $now->format('H:i');
+                //     // $currentTime->format('H:i');
+                //     if ($currentTime->between($openTime, $closeTime) && $d->is_open) {
+                //         $isOpen = true;
+                //     }
+                // }
+                // // dd($currentTime, $openTime, $closeTime, $isOpen);
                 array_push($response, [
                     'petshop_name' => $d->petshop_name,
                     'user_id' => $d->user_id,
@@ -168,16 +182,16 @@ class PetshopController extends Controller
                     'website' => $d->website,
                     'description' => $d->description,
                     'category' => json_decode($d->category),
-                    'is_open' => [
-                        'is_open' => $isOpen,
-                        'jam_operasional' => $store
-                    ], 
+                    // 'is_open' => $isOpen,
+                    'hari' => $d->hari_buka,
+                    'jam_buka' => $d->jam_buka,
+                    'jam_tutup' => $d->jam_tutup,
                     'links' => [
                         'self' => '/api/get-petshop/' . $d->id,
                     ],
                 ]);
             }
-            return response()->json($response);
+        return response()->json($response);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
@@ -195,8 +209,8 @@ class PetshopController extends Controller
                 $isOpen = false;
                 // dd($store);
                 if ($store) {
-                    $openTime = Carbon::parse($store->jam_buka);
-                    $closeTime = Carbon::parse($store->jam_tutup);
+                    $openTime = Carbon::parse($store->jam_buka)->format('H:i');
+                    $closeTime = Carbon::parse($store->jam_tutup)->format('H:i');
                     $currentTime = Carbon::now()->setTimezone('Asia/Jakarta');
                     if ($currentTime->between($openTime, $closeTime) && $store->is_open) {
                         $isOpen = true;
@@ -220,10 +234,10 @@ class PetshopController extends Controller
                     'website' => $d->website,
                     'description' => $d->description,
                     'category' => json_decode($d->category),
-                    'is_open' => [
-                        'is_open' => $isOpen,
-                        'jam_operasional' => $store
-                    ], // menambahkan field is_open
+                    'is_open' => $isOpen,
+                    'hari' => $store->hari_buka,
+                    'jam_buka' => $store->jam_buka->format('H:i'),
+                    'jam_tutup' => $store->jam_tutup->format('H:i'),
                 ],
             ]);
         } catch (\Throwable $e) {
