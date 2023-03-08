@@ -90,14 +90,14 @@ class PetshopController extends Controller
     public function updatePetshopProfile(Request $request, $id)
     {
         // Validate the request data
-        $request->validate([
-            'petshop_name' => 'nullable|string',
-            'petshop_image' => 'nullable|file',
-            'description' => 'nullable|string',
-            'website' => 'nullable|url',
-            'category' => 'nullable|array',
-            'category.*' => 'string|in:grooming,klinik,laboratorium,rawat inap,petshop'
-        ]);
+        // $request->validate([
+        //     'petshop_name' => 'nullable|string',
+        //     'petshop_image' => 'nullable|file',
+        //     'description' => 'nullable|string',
+        //     'website' => 'nullable|url',
+        //     'category' => 'nullable|array',
+        //     'category.*' => 'string|in:grooming,klinik,laboratorium,rawat inap,petshop'
+        // ]);
 
         try {
             $petshop = Petshop::findOrFail($id);
