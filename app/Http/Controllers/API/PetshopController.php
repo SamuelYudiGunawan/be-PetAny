@@ -205,19 +205,17 @@ class PetshopController extends Controller
     public function getPetshop($id){
         try {
             $d = Petshop::with('user_id:id,name')->find($id);
-            // $d = Petshop::with(['user_id:id,name', 'jamOperasional:hari_buka,jam_buka,jam_tutup'])->find($id);
-            $store = JamOperasional::where('hari_buka', Carbon::now()->locale('id')->translatedFormat('l'))->first(); // mencari data toko berdasarkan hari saat ini
-                // $isOpen = false;
-                // // dd($store);
-                if ($store) {
-                    $openTime = Carbon::parse($store->jam_buka)->format('H:i');
-                    $closeTime = Carbon::parse($store->jam_tutup)->format('H:i');
-                //     $currentTime = Carbon::now()->setTimezone('Asia/Jakarta');
-                //     if ($currentTime->between($openTime, $closeTime) && $store->is_open) {
-                //         $isOpen = true;
-                //     }
-                }
-                // dd($d->jam_operasional);
+            $store = null;
+            if ($hari = Carbon::now()->locale('id')->translatedFormat('l')) {
+                $store = JamOperasional::where('hari_buka', $hari)->first();
+            }
+            
+            $openTime = null;
+            $closeTime = null;
+            if ($store) {
+                $openTime = Carbon::parse($store->jam_buka)->format('H:i');
+                $closeTime = Carbon::parse($store->jam_tutup)->format('H:i');
+            }
             return response()->json([
                 'data' => [
                     'petshop_name' => $d->petshop_name,
@@ -237,7 +235,7 @@ class PetshopController extends Controller
                     'description' => $d->description,
                     'category' => json_decode($d->category),
                     // 'is_open' => $isOpen,
-                    'hari' => $store->hari_buka,
+                    'hari' => $store ? $store->hari_buka : null,
                     'jam_buka' => $openTime,
                     'jam_tutup' => $closeTime,
                 ],
