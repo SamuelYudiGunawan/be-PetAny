@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\API\PetController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\StaffController;
 use App\Http\Controllers\API\PetshopController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\Admin\PetCrudController;
@@ -67,13 +68,15 @@ Route::get('/get-petshop', [PetshopController::class, 'getAllPetshop']);
 Route::get('/get-petshop/{id}', [PetshopController::class, 'getPetshop']);
 Route::get('/petshop-form', [PetshopController::class, 'getPetshopForm']);
     // MANAGE STAFF
-    Route::post('/add-staff', [PetshopController::class, 'addStaff'])->middleware(['auth:sanctum']);
-    Route::delete('/remove-role', [PetshopController::class, 'removeRole'])->middleware(['auth:sanctum']);;
-    Route::delete('/remove-staff', [PetshopController::class, 'removePetshopStaff'])->middleware(['auth:sanctum']);;
+    Route::post('/add-staff', [StaffController::class, 'addStaff'])->middleware(['auth:sanctum']);
+    Route::delete('/remove-role', [StaffController::class, 'removeRole'])->middleware(['auth:sanctum']);
+    Route::delete('/remove-staff', [StaffController::class, 'removePetshopStaff'])->middleware(['auth:sanctum']);
+    Route::get('/get-doctors/{petshop_id}', [StaffController::class, 'getPetshopDoctors'])->middleware(['auth:sanctum']);
         //JAM OPERASIONAL PETSHOP
         Route::post('/petshop/create-jam-operasional/{id}', [JamOperasionalController::class, 'createJamOperasional'])->middleware(['auth:sanctum']);
         Route::get('/petshop/get-jam-operasional-data/{id}', [JamOperasionalController::class, 'getJamOperasionalData'])->middleware(['auth:sanctum']);
         Route::get('/petshop/get-jam-operasional/{id}', [JamOperasionalController::class, 'getJamOperasional'])->middleware(['auth:sanctum']);
+        Route::get('/dokter/jam-operasional/{id}', [JamOperasionalDokterController::class, 'getJamOperasionalMingguan']);
             //JAM OPERASIONAL DOKTER
             Route::post('/dokter/create-jam-operasional/{id}', [JamOperasionalDokterController::class, 'createJamOperasionalDokter'])->middleware(['auth:sanctum']);
             Route::get('/dokter/get-jam-operasional-data/{id}', [JamOperasionalDokterController::class, 'getJamOperasionalDataDokter'])->middleware(['auth:sanctum']);

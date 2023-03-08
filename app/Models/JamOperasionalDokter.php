@@ -15,6 +15,8 @@ class JamOperasionalDokter extends Model
         'is_open',
         'jam_buka',
         'jam_tutup',
+        'jam_buka2',
+        'jam_tutup2',
         'user_id'
     ];
 
