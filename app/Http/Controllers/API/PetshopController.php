@@ -261,7 +261,7 @@ class PetshopController extends Controller
     
             $user = User::where('email', $request->email)->firstOrFail();
     
-            $staff = Staff::where('user_id', $user->id)->first();
+            $staff = Staff::where('id', $user->id)->first();
     
             if ($staff) {
                 // If staff already exists, retrieve the user's existing roles and add the new roles
@@ -295,7 +295,7 @@ class PetshopController extends Controller
                     'petshop_id' => $userOwner->petshop_id,
                 ]);
 
-                $user->petshop_id = $petshop->id;
+                $user->petshop_id = $userOwner->petshop_id;
                 $user->save();
     
                 if ($request->has('roles')) {
