@@ -16,7 +16,7 @@ class Staff extends Model
         'petshop_id',
     ];
 
-    public function user_id()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
