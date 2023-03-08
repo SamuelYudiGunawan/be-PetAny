@@ -91,11 +91,11 @@ class JamOperasionalDokterController extends Controller
                 $closeTime2 = Carbon::parse($jamOperasional->jam_tutup2)->format('H:i');
                 $data->push([
                     'hari' => $hari->locale('id')->translatedFormat('l'),
-                    'tanggal' => $hari->format('D, j M'),
-                    'jam_buka' => $openTime,
-                    'jam_tutup' => $closeTime,
-                    'jam_buka2' => $openTime2,
-                    'jam_tutup2' => $closeTime2,
+                    'tanggal' => $hari->locale('id')->translatedFormat('l, j M'),
+                    'shift1' => $openTime . " - " . $closeTime,
+                    // 'jam_tutup' => $closeTime,
+                    'shift2' => $openTime2 . " - " . $closeTime2,
+                    // 'jam_tutup2' => $closeTime2,
                 ]);
             }
             $hari->addDay();
