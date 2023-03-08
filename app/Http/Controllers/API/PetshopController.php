@@ -209,14 +209,14 @@ class PetshopController extends Controller
             $store = JamOperasional::where('hari_buka', Carbon::now()->locale('id')->translatedFormat('l'))->first(); // mencari data toko berdasarkan hari saat ini
                 // $isOpen = false;
                 // // dd($store);
-                // if ($store) {
+                if ($store) {
                     $openTime = Carbon::parse($store->jam_buka)->format('H:i');
                     $closeTime = Carbon::parse($store->jam_tutup)->format('H:i');
                 //     $currentTime = Carbon::now()->setTimezone('Asia/Jakarta');
                 //     if ($currentTime->between($openTime, $closeTime) && $store->is_open) {
                 //         $isOpen = true;
                 //     }
-                // }
+                }
                 // dd($d->jam_operasional);
             return response()->json([
                 'data' => [
