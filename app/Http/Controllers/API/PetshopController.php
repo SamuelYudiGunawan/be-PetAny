@@ -233,7 +233,7 @@ class PetshopController extends Controller
                     'status' => $d->status,
                     'website' => $d->website,
                     'description' => $d->description,
-                    'category' => [json_decode($d->category)],
+                    'category' => $d->category == null ? [] : json_decode($d->category),
                     // 'is_open' => $isOpen,
                     'hari' => $store ? $store->hari_buka : null,
                     'jam_buka' => $openTime,
