@@ -93,9 +93,7 @@ class JamOperasionalDokterController extends Controller
                     'hari' => $hari->locale('id')->translatedFormat('l'),
                     'tanggal' => $hari->locale('id')->translatedFormat('l, j M'),
                     'shift1' => $openTime . " - " . $closeTime,
-                    // 'jam_tutup' => $closeTime,
                     'shift2' => $openTime2 . " - " . $closeTime2,
-                    // 'jam_tutup2' => $closeTime2,
                 ]);
             }
             $hari->addDay();
