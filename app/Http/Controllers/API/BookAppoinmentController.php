@@ -15,7 +15,8 @@ class BookAppoinmentController extends Controller
             'doctor' => 'required|string',
             'date' => 'required|date',
             'pets' => 'required|string',
-            'complaint' => 'required|string',
+            'complaint' => 'required|string',   
+            'shift' => 'required|string',
         ]);
 
         try {
@@ -25,6 +26,7 @@ class BookAppoinmentController extends Controller
             'date' => $request->date,
             'pets' => $request->pets,
             'complaint' => $request->complaint,
+            'shift' => $request->shift,
         ]);
         
         return response()->json([
@@ -132,6 +134,23 @@ class BookAppoinmentController extends Controller
         ]);
         return response()->json([
             'message' => 'Book Appoinment Rejected',
+        ]);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+    
+    public function finishBookAppointment($id){
+        try {
+        $book_appoinment = BookAppoinment::find($id)->update([
+            'status' => 'finished',
+        ]);
+        return response()->json([
+            'message' => 'Book Appoinment Finished',
         ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
