@@ -115,6 +115,30 @@ class StaffController extends Controller
         }
     }
 
+    public function getPetshopStaffs(Request $request, $petshopId)
+    {
+        try {
+            // Ensure the user is a petshop owner
+            // $petshopId = Auth::user()->petshop_id;
+
+            // Get the list of doctors for the petshop
+            $staffs = Staff::where('petshop_id', $petshopId)
+            ->whereHas('user.roles', function ($query) {
+                $query->where('name', 'petshop_staff');
+            })
+            ->with('user')
+            ->get();
+            return response()->json([
+                'data' => $staffs,
+            ]);
+        } catch (\Throwable $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
 
     public function removeRole(Request $request)
     {

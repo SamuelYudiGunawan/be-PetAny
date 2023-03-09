@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\BookAppoinment;
 use Illuminate\Routing\Controller;
@@ -13,7 +14,7 @@ class BookAppoinmentController extends Controller
     public function addBookAppoinment(Request $request){
         $request->validate([
             'doctor' => 'required|string',
-            'date' => 'required|date',
+            'date' => 'required|string',
             'pets' => 'required|string',
             'complaint' => 'required|string',   
             'shift' => 'required|string',
@@ -27,6 +28,12 @@ class BookAppoinmentController extends Controller
             'pets' => $request->pets,
             'complaint' => $request->complaint,
             'shift' => $request->shift,
+        ]);
+
+        $notification = Notification::create([
+            'user_id' => Auth::user()->id,
+            'title' => 'New Book Appointment by ' . Auth::user()->name,
+            'body' => 'New Book Appointment'
         ]);
         
         return response()->json([
@@ -112,8 +119,16 @@ class BookAppoinmentController extends Controller
 
     public function acceptBookAppoinment($id){
         try {
-        $book_appoinment = BookAppoinment::find($id)->update([
+        $book_appoinment = BookAppoinment::find($id);
+        
+        $book_appoinment->update([
             'status' => 'accepted',
+        ]);
+
+        $notification = Notification::create([
+            'user_id' => Auth::user()->id,
+            'title' => 'Book Appointment Acceppted',
+            'body' => 'Book Appointment ' . $book_appoinment->date . ' Accepted',
         ]);
         return response()->json([
             'message' => 'Book Appoinment Approved',
@@ -129,8 +144,18 @@ class BookAppoinmentController extends Controller
 
     public function rejectBookAppoinment($id){
         try {
-        $book_appoinment = BookAppoinment::find($id)->update([
+        $book_appoinment = BookAppoinment::find($id);
+        
+        $book_appoinment->update([
             'status' => 'rejected',
+        ]);
+
+        // dd($book_appoinment->date);
+
+        $notification = Notification::create([
+            'user_id' => Auth::user()->id,
+            'title' => 'Book Appointment Rejected',
+            'body' => 'Book Appointment ' . $book_appoinment->date . ' Rejected',
         ]);
         return response()->json([
             'message' => 'Book Appoinment Rejected',
@@ -146,8 +171,16 @@ class BookAppoinmentController extends Controller
     
     public function finishBookAppointment($id){
         try {
-        $book_appoinment = BookAppoinment::find($id)->update([
+        $book_appoinment = BookAppoinment::find($id);
+        
+        $book_appoinment->update([
             'status' => 'finished',
+        ]);
+
+        $notification = Notification::create([
+            'user_id' => Auth::user()->id,
+            'title' => 'Book Appointment Finished',
+            'body' => 'Book Appointment ' . $book_appoinment->date . ' Finished',
         ]);
         return response()->json([
             'message' => 'Book Appoinment Finished',
