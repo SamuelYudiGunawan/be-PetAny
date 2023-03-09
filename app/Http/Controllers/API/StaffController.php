@@ -122,12 +122,15 @@ class StaffController extends Controller
             // $petshopId = Auth::user()->petshop_id;
 
             // Get the list of doctors for the petshop
-            $staffs = Staff::where('petshop_id', $petshopId)
-            ->whereHas('user.roles', function ($query) {
-                $query->where('name', 'petshop_staff');
-            })
-            ->with('user')
-            ->get();
+            $staffs = User::with(['roles:name'])->where('petshop_id', $petshopId)->role('petshop_staff')->get();
+            // $staffs = $staffs->roles;
+
+            // foreach ($staffs as $staff) {
+            //     $data[] = [
+            //         'id' => $staff->id,
+            //         'name' => $staff->name,
+            //     ];
+            // }
             return response()->json([
                 'data' => $staffs,
             ]);
@@ -136,7 +139,7 @@ class StaffController extends Controller
             Log::error($errorMessage);
             return response()->json([
                 'error' => $errorMessage
-            ], 500);
+            ], 500);    
         }
     }
 
