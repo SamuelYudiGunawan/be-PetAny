@@ -29,6 +29,6 @@ class Staff extends Model
 
     public function jam_operasional()
     {
-        return $this->hasMany(JamOperasionalDokter::class, 'user_id');
+        return $this->hasMany(JamOperasionalDokter::class, 'user_id', 'user_id');
     }
 }

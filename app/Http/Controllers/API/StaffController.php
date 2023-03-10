@@ -98,7 +98,7 @@ class StaffController extends Controller
             ->whereHas('user.roles', function ($query) {
                 $query->where('name', 'dokter');
             })
-            // ->whereHas('jam_operasional')
+            ->whereHas('jam_operasional')
             ->with('user')
             ->get();
             
