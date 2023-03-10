@@ -17,9 +17,9 @@ class BookAppoinmentController extends Controller
 {
     public function addBookAppoinment(Request $request){
         $request->validate([
-            'doctor' => 'required|string',
+            'doctor' => 'required',
             'date' => 'required|string',
-            'pets' => 'required|string',
+            'pets' => 'required',
             'complaint' => 'required|string',   
             'shift' => 'required|string',
         ]);
