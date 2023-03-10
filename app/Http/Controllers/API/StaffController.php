@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Staff;
 use Illuminate\Http\Request;
@@ -93,19 +94,16 @@ class StaffController extends Controller
     public function getPetshopDoctors(Request $request, $petshopId)
     {
         try {
-            // Ensure the user is a petshop owner
-            // $petshopId = Auth::user()->petshop_id;
-
-            // Get the list of doctors for the petshop
             $doctors = Staff::where('petshop_id', $petshopId)
             ->whereHas('user.roles', function ($query) {
                 $query->where('name', 'dokter');
             })
+            // ->whereHas('jam_operasional')
             ->with('user')
             ->get();
-            return response()->json([
-                'data' => $doctors,
-            ]);
+            
+            // dd($doctors);
+            return response()->json($doctors);
         } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
@@ -115,6 +113,7 @@ class StaffController extends Controller
         }
     }
 
+
     public function getPetshopStaffs(Request $request, $petshopId)
     {
         try {
@@ -123,16 +122,15 @@ class StaffController extends Controller
 
             // Get the list of doctors for the petshop
             $staffs = User::with(['roles:name'])->where('petshop_id', $petshopId)->role('petshop_staff')->get();
-            // $staffs = $staffs->roles;
-
-            // foreach ($staffs as $staff) {
-            //     $data[] = [
-            //         'id' => $staff->id,
-            //         'name' => $staff->name,
-            //     ];
-            // }
+            $response = [];
+            foreach($staffs as $staff) {
+                array_push($response, [
+                'doctor' => $staff,
+                'links' => '/doctor/edit-doctor/' . $staff->id, 
+                ]);
+            }
             return response()->json([
-                'data' => $staffs,
+                'data' => $response,
             ]);
         } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();

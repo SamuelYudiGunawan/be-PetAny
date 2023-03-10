@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
+use Carbon\Carbon;
+use Midtrans\Snap;
+use Midtrans\Config;
+use App\Models\Order;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\BookAppoinment;
@@ -35,9 +39,48 @@ class BookAppoinmentController extends Controller
             'title' => 'New Book Appointment by ' . Auth::user()->name,
             'body' => 'New Book Appointment'
         ]);
+
+        // Set your Merchant Server Key
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = false;
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = true;
+
+        $orderId = 'BOOK_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
+
+        $order = Order::create([
+            'user_id' => Auth::user()->id,
+            'book_appoinment_id' => $book_appoinment->id,
+            'type' => 'book_appointment',
+            'gross_amount' =>  15000,
+            'payment_url' => null,
+            'order_id' => $orderId,
+        ]);
         
+        $midtransParams = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => $order->gross_amount,
+            ],
+        ];
+
+        $midtransResponse = Snap::createTransaction($midtransParams);
+        $midtransSnapToken = $midtransResponse->token;
+        $paymentUrl = $midtransResponse->redirect_url;
+
+        // Store the Midtrans token, transaction ID, and payment URL in the order
+        $order->midtrans_token = $midtransSnapToken;
+        $order->payment_url = $paymentUrl;
+        $order->save();
+
+        // Return the Midtrans Snap token to the client
         return response()->json([
             'data' => $book_appoinment,
+            'midtrans_token' => $midtransSnapToken, 
+            'payment_url' => $paymentUrl
         ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();

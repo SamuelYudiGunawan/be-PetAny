@@ -22,7 +22,7 @@ class OrderController extends Controller
         try {
 
             // Set your Merchant Server Key
-            Config::$serverKey = 'SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG';
+            Config::$serverKey = env('MIDTRANS_SERVER_KEY');
             // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
             \Midtrans\Config::$isProduction = false;
             // Set sanitization on (default)
