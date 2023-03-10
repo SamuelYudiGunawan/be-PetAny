@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Models\Staff;
 use App\Models\Product;
 use App\Models\JamOperasional;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,10 @@ class Petshop extends Model
     public function jamOperasional()
     {
         return $this->hasMany(JamOperasional::class);
+    }
+    public function staffs()
+    {
+        return $this->hasMany(Staff::class);
     }
     public function scopeStatus($query, $value)
     {
