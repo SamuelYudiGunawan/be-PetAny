@@ -14,23 +14,14 @@ class JamOperasionalController extends Controller
         try {
             $data = JamOperasional::with('petshop:id')->where('petshop_id', $id)->get();
             $petshop_id = Auth::user()->petshop_id;
-            // return response()->json(
-            //     [
-            //         'data' => [
-            //             'petshop_id' => Auth::user()->petshop_id,
-            //             'hari_buka' => $data['hari_buka'],
-            //             'jam_buka' => $data['jam_buka'],
-            //             'jam_tutup' => $data['jam_tutup'],
-            //             'is_open' => $data->is_open == 1 ? true : false,
-            //         ]
-            //     ]
-            // );
             $response = [];
             foreach ($data as $d) {
+                $openTime = Carbon::parse($d->jam_buka)->format('H:i');
+                $closeTime = Carbon::parse($d->jam_tutup)->format('H:i');
                 array_push($response, [
                         'hari_buka' => $d->hari_buka,
-                        'jam_buka' => $d->jam_buka,
-                        'jam_tutup' => $d->jam_tutup,
+                        'jam_buka' => $openTime,
+                        'jam_tutup' => $closeTime,
                         'is_open' => $d->is_open == 1 ? true : false,
                 ]);
             }
