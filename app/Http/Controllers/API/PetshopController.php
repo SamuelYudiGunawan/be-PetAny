@@ -89,16 +89,6 @@ class PetshopController extends Controller
 
     public function updatePetshopProfile(Request $request, $id)
     {
-        // Validate the request data
-        // $request->validate([
-        //     'petshop_name' => 'nullable|string',
-        //     'petshop_image' => 'nullable|file',
-        //     'description' => 'nullable|string',
-        //     'website' => 'nullable|url',
-        //     'category' => 'nullable|array',
-        //     'category.*' => 'string|in:grooming,klinik,laboratorium,rawat inap,petshop'
-        // ]);
-
         try {
             $petshop = Petshop::findOrFail($id);
             $petshop_image = null;
@@ -150,6 +140,75 @@ class PetshopController extends Controller
                 })
                 ->select('petshops.*', DB::raw('IFNULL(DATE_FORMAT(jam_operasionals.jam_buka,"%H:%i"), null) AS jam_buka'), DB::raw('IFNULL(DATE_FORMAT(jam_operasionals.jam_tutup,"%H:%i"), null) AS jam_tutup'),  DB::raw('IFNULL(jam_operasionals.hari_buka, null) AS hari_buka'))
                 ->get();
+            $response = [];
+            // $isOpen = false;
+            foreach ($data as $d) {
+                // // $isOpen = false;
+                // if ($d->hari_buka) {
+                //     $openTime = $d->jam_buka;
+                //     $closeTime = $d->jam_tutup;
+                //     $currentTime = Carbon::now()->setTimezone('Asia/Jakarta');
+                //     // $currentTime = $now->format('H:i');
+                //     // $currentTime->format('H:i');
+                //     if ($currentTime->between($openTime, $closeTime) && $d->is_open) {
+                //         $isOpen = true;
+                //     }
+                // }
+                // // dd($currentTime, $openTime, $closeTime, $isOpen);
+                array_push($response, [
+                    'petshop_name' => $d->petshop_name,
+                    'user_id' => $d->user_id,
+                    'petshop_image' => $d->petshop_image,
+                    'company_name' => $d->company_name,
+                    'district' => $d->district,
+                    'phone_number' => $d->phone_number,
+                    'petshop_email' => $d->petshop_email,
+                    'permit.*' => $d->permit,
+                    'province' => $d->province,
+                    'city' => $d->city,
+                    'postal_code' => $d->postal_code,
+                    'petshop_address' => $d->petshop_address,
+                    'status' => $d->status,
+                    'website' => $d->website,
+                    'description' => $d->description,
+                    'category' => json_decode($d->category),
+                    // 'is_open' => $isOpen,
+                    'hari' => $d->hari_buka,
+                    'jam_buka' => $d->jam_buka,
+                    'jam_tutup' => $d->jam_tutup,
+                    'links' => [
+                        'self' => '/api/get-petshop/' . $d->id,
+                    ],
+                ]);
+            }
+        return response()->json($response);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
+    public function getPetshopWithStaffAndSchedule()
+    {
+        try {
+            // $data = Petshop::with(['user_id:id,name', 'jamOperasional'])->get();
+            $subquery = DB::table('jam_operasionals')
+                ->select('petshop_id', DB::raw('MAX(jam_buka) AS jam_buka'), DB::raw('MAX(jam_tutup) AS jam_tutup'), DB::raw('MAX(hari_buka) AS hari_buka'))
+                ->where('hari_buka', Carbon::now()->locale('id')->translatedFormat('l'))
+                ->groupBy('petshop_id');
+
+            $data = Petshop::whereHas('staffs', function ($query) {
+                $query->whereHas('jam_operasional');
+            })
+            ->leftJoinSub($subquery, 'jam_operasionals', function ($join) {
+                $join->on('petshops.id', '=', 'jam_operasionals.petshop_id');
+            })
+            ->select('petshops.*', DB::raw('IFNULL(DATE_FORMAT(jam_operasionals.jam_buka,"%H:%i"), null) AS jam_buka'), DB::raw('IFNULL(DATE_FORMAT(jam_operasionals.jam_tutup,"%H:%i"), null) AS jam_tutup'),  DB::raw('IFNULL(jam_operasionals.hari_buka, null) AS hari_buka'))
+            ->get();
+
             $response = [];
             // $isOpen = false;
             foreach ($data as $d) {

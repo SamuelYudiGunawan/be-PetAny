@@ -65,6 +65,7 @@ Route::post('/logout', [UserController::class, 'logout'])->middleware(['auth:san
 Route::post('/create-petshop', [PetshopController::class, 'create'])->middleware(['auth:sanctum']);
 Route::post('/update-petshop/{id}', [PetshopController::class, 'updatePetshopProfile'])->middleware(['auth:sanctum']);
 Route::get('/get-petshop', [PetshopController::class, 'getAllPetshop']);
+Route::get('/get-petshop-with-schedule', [PetshopController::class, 'getPetshopWithStaffAndSchedule']);
 Route::get('/get-petshop/{id}', [PetshopController::class, 'getPetshop']);
 Route::get('/petshop-form', [PetshopController::class, 'getPetshopForm']);
     // MANAGE STAFF
