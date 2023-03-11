@@ -128,10 +128,10 @@ class OrderController extends Controller
                 $doctor = User::where('id', $book_appoinment->doctor)->first();
                 $user = User::where('id', $book_appoinment->user_id)->first();
                 $notification = Notification::create([
-                    'user_id' => $book_appoinment->user_id,
-                    'petshop_id' => $doctor->petshop_id,
+                    'user_id' => 1,
+                    'petshop_id' => 1,
                     'title' => 'New Book Appointment',
-                    'body' => 'New book appointment by ' . $user->name . ' for shift ' . $book_appoinment->shift . ' please review it ASAP.',
+                    'body' => 'New book appointment by for shift please review it ASAP.',
                 ]);
                 $order->transaction_id = $request->transaction_id;
                 $order->status_code = $request->status_code;
