@@ -7,13 +7,14 @@ use Midtrans\Config;
 use App\Models\Order;
 use App\Models\Product;
 use Midtrans\Notification;
+use App\Models\OrderPayment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\BookAppoinment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\OrderPayment;
 
 class OrderController extends Controller
 {
@@ -119,16 +120,17 @@ class OrderController extends Controller
                 ], 400);
             }
 
+
             $book_appoinment = BookAppoinment::where('order_id', $request->order_id)->first();
             if($request->order_id == $book_appoinment->order_id && $request->transaction_status == 'settlement') 
             {
                 $doctor = User::where('id', $book_appoinment->doctor)->first();
                 $user = User::where('id', $book_appoinment->user_id)->first();
                 $notification = Notification::create([
-                    'user_id' => 1,
-                    'petshop_id' => 1,
+                    'user_id' => $book_appoinment->user_id,
+                    'petshop_id' => $doctor->petshop_id,
                     'title' => 'New Book Appointment',
-                    'body' => 'New book appointment for shift please review it ASAP.',
+                    'body' => 'New book appointment by ' . $user->name . ' for shift ' . $book_appoinment->shift . ' please review it ASAP.',
                 ]);
                 $order->transaction_id = $request->transaction_id;
                 $order->status_code = $request->status_code;
