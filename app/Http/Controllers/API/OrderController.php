@@ -120,7 +120,31 @@ class OrderController extends Controller
             }
             // $order = Order::where('order_id', $request->order_id)->first();
 
-
+            $book_appoinment = BookAppoinment::where('order_id', $request->order_id)->first();
+            if($request->order_id == $book_appoinment->order_id && $request->transaction_status == 'settlement') 
+            {
+                $doctor = User::where('id', $book_appoinment->doctor)->first();
+                $user = User::where('id', $book_appoinment->user_id)->first();
+                $notification = Notification::create([
+                    'user_id' => $book_appoinment->user_id,
+                    'petshop_id' => $doctor->petshop_id,
+                    'title' => 'New Book Appointment',
+                    'body' => 'New book appointment by ' . $user->name . ' for shift ' . $book_appoinment->shift . ' please review it ASAP.',
+                ]);
+                $order->transaction_id = $request->transaction_id;
+                $order->status_code = $request->status_code;
+                $order->json_data = json_encode($request->all());
+                $order->signature_key = $request->signature_key;
+                $order->payment_type = $request->payment_type;
+                $order->transaction_status = $request->transaction_status;
+                // if ($request->transaction_status == 'settlement') {
+                //     $order->transaction_status = 'paid';
+                // }
+                // if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
+                //     $order->transaction_status = 'error';
+                // }
+                $order->save();
+            } else {
             $order->transaction_id = $request->transaction_id;
             $order->status_code = $request->status_code;
             $order->json_data = json_encode($request->all());
@@ -134,17 +158,6 @@ class OrderController extends Controller
             //     $order->transaction_status = 'error';
             // }
             $order->save();
-            $book_appoinment = BookAppoinment::where('order_id', $request->order_id)->first();
-            if($request->order_id == $book_appoinment->order_id && $request->transaction_status == 'settlement') 
-            {
-                $doctor = User::where('id', $book_appoinment->doctor)->first();
-                $user = User::where('id', $book_appoinment->user_id)->first();
-                $notification = Notification::create([
-                    'user_id' => $book_appoinment->user_id,
-                    'petshop_id' => $doctor->petshop_id,
-                    'title' => 'New Book Appointment',
-                    'body' => 'New book appointment by ' . $user->name . ' for shift ' . $book_appoinment->shift . ' please review it ASAP.',
-                ]);
             }
             return response()->json([
                 'success' => true,
