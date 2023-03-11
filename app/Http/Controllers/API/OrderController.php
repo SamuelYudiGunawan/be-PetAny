@@ -154,8 +154,8 @@ class OrderController extends Controller
             //     $order->transaction_status = 'error';
             // }
             $order->save();
-            $book_appoinment = BookAppoinment::where('order_id', $order->order_id)->first();
-            if($order->order_id == $book_appoinment->order_id && $order->transaction_status == 'settlement') 
+            $book_appoinment = BookAppoinment::where('order_id', $request->order_id)->first();
+            if($request->order_id == $book_appoinment->order_id && $request->transaction_status == 'settlement') 
             {
                 $doctor = User::where('id', $book_appoinment->doctor)->first();
                 $user = User::where('id', $book_appoinment->user_id)->first();
