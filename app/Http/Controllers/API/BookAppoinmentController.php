@@ -9,7 +9,7 @@ use App\Models\User;
 use Midtrans\Config;
 use App\Models\Order;
 use App\Models\Petshop;
-use App\Models\Notification;
+use App\Models\Notifications;
 use Illuminate\Http\Request;
 use App\Models\BookAppoinment;
 use Illuminate\Routing\Controller;
@@ -210,7 +210,7 @@ class BookAppoinmentController extends Controller
             'status' => 'accepted',
         ]);
 
-        $notification = Notification::create([
+        $notification = Notifications::create([
             'user_id' => Auth::user()->id,
             'title' => 'Book Appointment Acceppted',
             'body' => 'Book Appointment ' . $book_appoinment->date . ' Accepted',
@@ -237,7 +237,7 @@ class BookAppoinmentController extends Controller
 
         // dd($book_appoinment->date);
 
-        $notification = Notification::create([
+        $notification = Notifications::create([
             'user_id' => Auth::user()->id,
             'title' => 'Book Appointment Rejected',
             'body' => 'Book Appointment ' . $book_appoinment->date . ' Rejected',
@@ -262,7 +262,7 @@ class BookAppoinmentController extends Controller
             'status' => 'finished',
         ]);
 
-        $notification = Notification::create([
+        $notification = Notifications::create([
             'user_id' => Auth::user()->id,
             'title' => 'Book Appointment Finished',
             'body' => 'Book Appointment ' . $book_appoinment->date . ' Finished',
