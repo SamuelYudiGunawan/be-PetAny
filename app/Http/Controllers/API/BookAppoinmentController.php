@@ -210,13 +210,15 @@ class BookAppoinmentController extends Controller
             'status' => 'accepted',
         ]);
 
+        $doctor = User::where('id', $book_appoinment->doctor)->first();
         $notification = Notifications::create([
-            'user_id' => Auth::user()->id,
-            'title' => 'Book Appointment Acceppted',
-            'body' => 'Book Appointment ' . $book_appoinment->date . ' Accepted',
+            'user_id' => $book_appoinment->user_id,
+            'petshop_id' => $doctor->petshop_id,
+            'title' => 'Book Appointment Accepted',
+            'body' => 'Your book appointment ' . ' for ' . $book_appoinment->shift . ' is Accepted',
         ]);
         return response()->json([
-            'message' => 'Book Appoinment Approved',
+            'message' => 'Book Appoinment Accepted',
         ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
@@ -235,12 +237,12 @@ class BookAppoinmentController extends Controller
             'status' => 'rejected',
         ]);
 
-        // dd($book_appoinment->date);
-
+        $doctor = User::where('id', $book_appoinment->doctor)->first();
         $notification = Notifications::create([
-            'user_id' => Auth::user()->id,
+            'user_id' => $book_appoinment->user_id,
+            'petshop_id' => $doctor->petshop_id,
             'title' => 'Book Appointment Rejected',
-            'body' => 'Book Appointment ' . $book_appoinment->date . ' Rejected',
+            'body' => 'Your book appointment ' . ' for ' . $book_appoinment->shift . ' is Rejected',
         ]);
         return response()->json([
             'message' => 'Book Appoinment Rejected',
@@ -262,10 +264,12 @@ class BookAppoinmentController extends Controller
             'status' => 'finished',
         ]);
 
+        $doctor = User::where('id', $book_appoinment->doctor)->first();
         $notification = Notifications::create([
-            'user_id' => Auth::user()->id,
+            'user_id' => $book_appoinment->user_id,
+            'petshop_id' => $doctor->petshop_id,
             'title' => 'Book Appointment Finished',
-            'body' => 'Book Appointment ' . $book_appoinment->date . ' Finished',
+            'body' => 'Your book appointment ' . ' for ' . $book_appoinment->shift . ' is Finished',
         ]);
         return response()->json([
             'message' => 'Book Appoinment Finished',

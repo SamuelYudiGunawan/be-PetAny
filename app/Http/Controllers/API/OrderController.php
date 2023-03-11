@@ -108,10 +108,8 @@ class OrderController extends Controller
             // Retrieve the order using the order ID provided in the notification
             $order = Order::where('order_id', $request->order_id)->first();
 
-            $serverKey = "SB-Mid-server-yUWEa26RmN6-m79R4pQIJ8yG";
-
             // Construct the signature key using the order details and your merchant server key
-            $signatureKey = $request->order_id . $request->status_code . $request->gross_amount . $serverKey;
+            $signatureKey = $request->order_id . $request->status_code . $request->gross_amount . env('MIDTRANS_SERVER_KEY');
             $signatureKey = hash('SHA512', $signatureKey);
 
             // Verify the signature key
