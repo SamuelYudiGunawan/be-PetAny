@@ -125,10 +125,8 @@ class StaffController extends Controller
             $response = [];
             foreach($staffs as $staff) {
                 array_push($response, [
-                'data' => [
                     'staff' => $staffs,
-                    'links' => '/doctor/edit-doctor/' . $staff->id, 
-                ] 
+                    'links' => '/doctor/edit-doctor/' . $staff->id,
                 ]);
             }
             return response()->json($response);
