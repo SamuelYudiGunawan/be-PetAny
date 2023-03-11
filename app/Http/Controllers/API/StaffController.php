@@ -195,9 +195,7 @@ class StaffController extends Controller
             foreach ($roles as $role) {
                 $user->removeRole($role);
             }
-        
-            $user->removeRole('petshop_staff');
-        
+                
             $staff = Staff::where('user_id', $user->id)->first();
         
             if ($staff) {
