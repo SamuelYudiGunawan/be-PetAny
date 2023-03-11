@@ -104,7 +104,7 @@ Route::post('/add-bookappoinment', [BookAppoinmentController::class, 'addBookApp
 Route::post('/accept-bookappoinment/{id}', [BookAppoinmentController::class, 'acceptBookAppoinment'])->middleware(['auth:sanctum']);
 Route::post('/reject-bookappoinment/{id}', [BookAppoinmentController::class, 'rejectBookAppoinment'])->middleware(['auth:sanctum']);
 Route::post('/finish-bookappoinment/{id}', [BookAppoinmentController::class, 'finishBookAppoinment'])->middleware(['auth:sanctum']);
-Route::get('/get-bookappoinment', [BookAppoinmentController::class, 'getAllBookAppoinment'])->middleware(['auth:sanctum']);
+Route::get('/get-all-bookappoinment/{doctor_id}', [BookAppoinmentController::class, 'getAllBookAppoinment'])->middleware(['auth:sanctum']);
 Route::get('/get-bookappoinment/{id}', [BookAppoinmentController::class, 'getBookAppoinment'])->middleware(['auth:sanctum']);
 Route::get('/bookappoinment-form', [BookAppoinmentController::class, 'getBookAppoinmentForm']);
 
