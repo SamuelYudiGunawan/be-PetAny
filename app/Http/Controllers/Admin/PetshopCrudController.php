@@ -139,7 +139,13 @@ class PetshopCrudController extends CrudController
         ]);
 
         $user = User::where('id', $petshop->user_id)->first();
-        $user->assignRole('petshop_staff');
+        $notification = Notifications::create([
+            'user_id' => $user->user_id,
+            'petshop_id' => $petshop->id,
+            'title' => 'Petshop Registration Accepted',
+            'body' => 'Your petshop registration is Accepted',
+        ]);
+        $user->assignRole(['petshop_staff', 'petshop_owner']);
         return response()->json([
             'message' => 'Petshop Approved',
         ]);
@@ -156,6 +162,14 @@ class PetshopCrudController extends CrudController
         try {
         $Petshop = Petshop::find($id)->update([
             'status' => 'rejected',
+        ]);
+
+        $user = User::where('id', $petshop->user_id)->first();
+        $notification = Notifications::create([
+            'user_id' => $user->user_id,
+            'petshop_id' => $petshop->id,
+            'title' => 'Petshop Registration Rejected',
+            'body' => 'Your petshop registration is Rejected',
         ]);
         return response()->json([
             'message' => 'Petshop Rejected',

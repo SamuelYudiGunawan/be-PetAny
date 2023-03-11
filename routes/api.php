@@ -10,6 +10,7 @@ use App\Http\Controllers\API\StaffController;
 use App\Http\Controllers\API\PetshopController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\Admin\PetCrudController;
+use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\Admin\PetshopCrudController;
 use App\Http\Controllers\API\BookAppoinmentController;
 use App\Http\Controllers\API\JamOperasionalController;
@@ -119,3 +120,7 @@ Route::get('/product-form', [ProductController::class, 'getProductForm']);
 //ORDER
 Route::post('/create-order', [OrderController::class, 'store'])->middleware('auth:sanctum');
 Route::post('/midtrans/handle-notification', [OrderController::class, 'handleMidtransNotification']);
+
+//NOTIFICATION
+Route::get('/get-user-notification', [NotificationController::class, 'getUserNotification'])->middleware('auth:sanctum');
+Route::get('/get-petshop-notification/{id}', [NotificationController::class, 'getPetshopNotification'])->middleware('auth:sanctum');
