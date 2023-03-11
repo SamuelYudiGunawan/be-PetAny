@@ -118,7 +118,6 @@ class OrderController extends Controller
                     'message' => 'Signature is Invalid',
                 ], 400);
             }
-            // $order = Order::where('order_id', $request->order_id)->first();
 
             $book_appoinment = BookAppoinment::where('order_id', $request->order_id)->first();
             if($request->order_id == $book_appoinment->order_id && $request->transaction_status == 'settlement') 
@@ -129,7 +128,7 @@ class OrderController extends Controller
                     'user_id' => $book_appoinment->user_id,
                     'petshop_id' => $doctor->petshop_id,
                     'title' => 'New Book Appointment',
-                    'body' => 'New book appointment by ' . $user->name . ' for shift ' . $book_appoinment->shift . ' please review it ASAP.',
+                    'body' => 'New book appointment for shift ' . $book_appoinment->shift . ' please review it ASAP.',
                 ]);
                 $order->transaction_id = $request->transaction_id;
                 $order->status_code = $request->status_code;
