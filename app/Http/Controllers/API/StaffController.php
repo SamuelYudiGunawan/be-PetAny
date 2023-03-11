@@ -125,13 +125,13 @@ class StaffController extends Controller
             $response = [];
             foreach($staffs as $staff) {
                 array_push($response, [
-                'doctor' => $staff,
-                'links' => '/doctor/edit-doctor/' . $staff->id, 
+                'data' => [
+                    'staff' => $staffs,
+                    'links' => '/doctor/edit-doctor/' . $staff->id, 
+                ] 
                 ]);
             }
-            return response()->json([
-                'data' => $response,
-            ]);
+            return response()->json($response);
         } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
