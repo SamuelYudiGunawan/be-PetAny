@@ -41,13 +41,6 @@ class BookAppoinmentController extends Controller
             'order_id' => $orderId,
         ]);
         
-
-        $notification = Notification::create([
-            'user_id' => Auth::user()->id,
-            'title' => 'New Book Appointment by ' . Auth::user()->name,
-            'body' => 'New Book Appointment'
-        ]);
-
         // Set your Merchant Server Key
         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
@@ -75,20 +68,20 @@ class BookAppoinmentController extends Controller
             ],
         ];
 
-        $midtransResponse = Snap::createTransaction($midtransParams);
-        $midtransSnapToken = $midtransResponse->token;
-        $paymentUrl = $midtransResponse->redirect_url;
+        // $midtransResponse = Snap::createTransaction($midtransParams);
+        // $midtransSnapToken = $midtransResponse->token;
+        // $paymentUrl = $midtransResponse->redirect_url;
 
-        // Store the Midtrans token, transaction ID, and payment URL in the order
-        $order->midtrans_token = $midtransSnapToken;
-        $order->payment_url = $paymentUrl;
-        $order->save();
+        // // Store the Midtrans token, transaction ID, and payment URL in the order
+        // $order->midtrans_token = $midtransSnapToken;
+        // $order->payment_url = $paymentUrl;
+        // $order->save();
 
         // Return the Midtrans Snap token to the client
         return response()->json([
             'data' => $book_appoinment,
-            'midtrans_token' => $midtransSnapToken, 
-            'payment_url' => $paymentUrl
+            // 'midtrans_token' => $midtransSnapToken, 
+            // 'payment_url' => $paymentUrl
         ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
