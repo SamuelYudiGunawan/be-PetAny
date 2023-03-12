@@ -21,8 +21,6 @@ class ProductController extends Controller
             'image' => 'required|file|mimes:png,jpg',
             'stock' => 'required|string',
             'price' => 'required|string',
-            'location' => 'required|string',
-            'category' => 'required|string',
         ]);
 
         try {
@@ -41,8 +39,6 @@ class ProductController extends Controller
             'image' => url('/').'/'.$imagePath,
             'stock' => $request->stock,
             'price' => $request->price,
-            'location' => $request->location,
-            'category' => $request->category,
         ]);
         return response()->json([
             'data' => $product,
@@ -76,8 +72,31 @@ class ProductController extends Controller
                 'error' => $errorMessage
             ], 500);
         }
-        
     }
+
+    public function getPetshopProduct(){
+        try{
+            $data = Product::where('petshop_id', Auth::user()->petshop_id)->get();
+            $response = [];
+            foreach ($data as $d) {
+            $petshop = Petshop::where('id', $d->petshop_id)->first();
+            $petshop_name = Str::slug($petshop->petshop_name);
+            $product_name = Str::slug($d->name);
+                array_push($response, [
+                    'data' => $d,
+                    'links' => '/' . $petshop_name . '/' . $product_name,
+                ]);
+            }
+            return response()->json($response);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
     public function getProduct($id)
     {
         try{

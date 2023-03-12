@@ -117,6 +117,7 @@ Route::get('/bookappoinment-form', [BookAppoinmentController::class, 'getBookApp
 //PRODUCT
 Route::post('/add-product', [ProductController::class, 'addProduct'])->middleware(['auth:sanctum']);
 Route::get('/get-product', [ProductController::class, 'getAllProduct'])->middleware(['auth:sanctum']);
+Route::get('/get-petshop-product', [ProductController::class, 'getPetshopProduct'])->middleware(['auth:sanctum']);
 Route::get('/get-product/{id}', [ProductController::class, 'getProduct'])->middleware(['auth:sanctum']);
 Route::delete('/delete-product/{id}', [ProductController::class, 'deleteProduct'])->middleware(['auth:sanctum']);
 Route::post('/edit-product/{id}', [ProductController::class, 'editProduct'])->middleware(['auth:sanctum']);
