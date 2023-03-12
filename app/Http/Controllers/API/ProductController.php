@@ -100,7 +100,7 @@ class ProductController extends Controller
     public function getProduct($id)
     {
         try{
-            $d = Product::with('petshop_id:id')->find($id)->with('petshop_id')->first();
+            $d = Product::where('id', $id)->with('petshop_id')->first();
             return response()->json([
                 'data' => $d,
                 'links' => 'api/add-wishlist?product_id=' . $d->id,
