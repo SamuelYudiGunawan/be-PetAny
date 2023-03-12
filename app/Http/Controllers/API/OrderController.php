@@ -166,7 +166,7 @@ class OrderController extends Controller
     public function acceptProduct($order_id){
         try {
         $order = Order::where('order_id', $order_id)->first();
-        $product = Product::where('product_id', $order->product_id)->first();
+        $product = Product::where('id', $order->product_id)->first();
         
         $order->update([
             'product_status' => 'pengemasan',
