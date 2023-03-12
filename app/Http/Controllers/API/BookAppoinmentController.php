@@ -223,7 +223,7 @@ class BookAppoinmentController extends Controller
                             'type' => $order->type,
                             'time' => $order->updated_at->format('H:i'),
                         ]);
-                if ($order->transaction_status === 'treatment') {
+                if ($order->transaction_status === 'settlement') {
                     $petCollection = Pet::where('id', $d->pets)->get();
                     $petArray = [];
                     foreach ($petCollection as $pet) {
