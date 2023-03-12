@@ -128,18 +128,23 @@ class BookAppoinmentController extends Controller
         ];
     }
 
-    public function getAllBookAppoinment($doctorId){
+    public function getAllBookAppoinment(){
         try{
-            $data = BookAppoinment::where('doctor', $doctorId)->get();
-            $doctor = User::where('id', $doctorId)->first();
+            if (Auth::user()->role == 'petshop_owner') {
+                $data = BookAppoinment::where('doctor', Auth::user()->petshop_id)->get();
+            } else {
+                $data = BookAppoinment::where('doctor', Auth::user()->id)->get();
+            }
+
             $response = [];
             foreach($data as $d) {
+                $doctor = User::where('id', $d->doctor)->first();
                 $orderCollection = Order::where('order_id', $d->order_id)->get();
                 $orderArray = [];
                 foreach ($orderCollection as $order) {
                         array_push($orderArray, [
                             'order_id' => $order->order_id,
-                            'amount' => $order->gross_amount,
+                            'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
                             'type' => $order->type,
                             'time' => $order->updated_at->format('H:i')
                         ]);
@@ -172,7 +177,6 @@ class BookAppoinmentController extends Controller
                     ]);
                 }
                 }
-                
             }
             return response()->json($response);
         } catch (\Exception $e) {
@@ -199,7 +203,7 @@ class BookAppoinmentController extends Controller
                             'type' => $order->type,
                             'time' => $order->updated_at->format('H:i')
                         ]);
-                if ($order->transaction_status === null) {
+                if ($order->transaction_status === 'settlement') {
                     $petCollection = Pet::where('id', $d->pets)->get();
                     $petArray = [];
                     foreach ($petCollection as $pet) {
@@ -228,7 +232,6 @@ class BookAppoinmentController extends Controller
                     ]);
                 }
                 }
-                
             }
             return response()->json($response);
         } catch (\Exception $e) {
