@@ -177,7 +177,7 @@ class OrderController extends Controller
         ]);
 
         $notification = Notifications::create([
-            'user_id' => $product->user_id,
+            'user_id' => $order->user_id,
             'petshop_id' => $product->petshop_id,
             'title' => 'Product Order Accepted',
             'body' => 'Your product order ' . $product->name . ' is Accepted',
@@ -206,7 +206,7 @@ class OrderController extends Controller
         ]);
 
         $notification = Notifications::create([
-            'user_id' => $product->user_id,
+            'user_id' => $order->user_id,
             'petshop_id' => $product->petshop_id,
             'title' => 'Product Order Rejected',
             'body' => 'Your product order ' . $product->name . ' is rejected',
@@ -228,14 +228,14 @@ class OrderController extends Controller
     public function sendProduct($order_id){
         try {
         $order = Order::where('order_id', $order_id)->first();
-        $product = Product::where('product_id', $order->product_id)->first();
+        $product = Product::where('id', $order->product_id)->first();
         
         $order->update([
             'product_status' => 'pengiriman',
         ]);
 
         $notification = Notifications::create([
-            'user_id' => $product->user_id,
+            'user_id' => $order->user_id,
             'petshop_id' => $product->petshop_id,
             'title' => 'Product Order On Delivery',
             'body' => 'Your product order ' . $product->name . ' is on Delivery',
@@ -257,14 +257,14 @@ class OrderController extends Controller
     public function finishProduct($order_id){
         try {
         $order = Order::where('order_id', $order_id)->first();
-        $product = Product::where('product_id', $order->product_id)->first();
+        $product = Product::where('id', $order->product_id)->first();
         
         $order->update([
             'product_status' => 'pesanan selesai',
         ]);
 
         $notification = Notifications::create([
-            'user_id' => $product->user_id,
+            'user_id' => $order->user_id,
             'petshop_id' => $product->petshop_id,
             'title' => 'Product Order Finished',
             'body' => 'Product order ' . $product->name . ' is Finished',
