@@ -33,15 +33,13 @@ class ProductController extends Controller
                 $imageName
             );
             $image = url('/').'/'.$imagePath;
-            $petshop->image = $image;
-            $petshop->save();
         }
         $user = Auth::user();
         $product = Product::create([
             'petshop_id' => $user->petshop_id,
             'name' => $request->name,
             'description' => $request->description,
-            // 'image' => url('/').'/'.$imagePath,
+            'image' => $image,
             'stock' => $request->stock,
             'price' => $request->price,
         ]);
