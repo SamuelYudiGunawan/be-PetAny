@@ -64,7 +64,7 @@ class ProductController extends Controller
             $product_name = Str::slug($d->name);
                 array_push($response, [
                     'data' => $d,
-                    'links' => '/' . $petshop_name . '/' . $product_name,
+                    'links' => '/api/get-product/' . $d->id,
                 ]);
             }
             return response()->json($response);
