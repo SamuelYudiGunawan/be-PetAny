@@ -126,7 +126,7 @@ Route::get('/product-form', [ProductController::class, 'getProductForm']);
     Route::delete('/remove-wishlist', [WishlistController::class, 'removeWishlist'])->middleware(['auth:sanctum']);
 
 //ORDER
-Route::post('/create-order', [OrderController::class, 'store'])->middleware('auth:sanctum');
+Route::post('/create-order', [OrderController::class, 'checkoutProduct'])->middleware('auth:sanctum');
 Route::post('/midtrans/handle-notification', [OrderController::class, 'handleMidtransNotification']);
 
 //NOTIFICATION
