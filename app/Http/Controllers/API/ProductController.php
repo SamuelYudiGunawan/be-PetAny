@@ -27,9 +27,9 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('image')) . "." . $request->file('image')->getClientOriginalExtension();
-            $imagePath = "storage/document/product_image/" . $imageName;
+            $imagePath = "storage/document/petshop_image/product_image/" . $imageName;
             $request->image->storeAs(
-                "public/document/product_image",
+                "public/document/petshop_image/product_image",
                 $imageName
             );
             $image = url('/').'/'.$imagePath;
