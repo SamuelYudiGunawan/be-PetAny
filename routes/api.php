@@ -9,6 +9,7 @@ use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\StaffController;
 use App\Http\Controllers\API\PetshopController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\WishlistController;
 use App\Http\Controllers\Admin\PetCrudController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\Admin\PetshopCrudController;
@@ -103,9 +104,9 @@ Route::get('/medicalrecord-form', [PetController::class, 'getMedicalForm']);
 
 //BOOK APPOINMENT
 Route::post('/add-bookappoinment', [BookAppoinmentController::class, 'addBookAppoinment'])->middleware(['auth:sanctum']);
-Route::post('/accept-bookappoinment/{id}', [BookAppoinmentController::class, 'acceptBookAppoinment'])->middleware(['auth:sanctum']);
-Route::post('/reject-bookappoinment/{id}', [BookAppoinmentController::class, 'rejectBookAppoinment'])->middleware(['auth:sanctum']);
-Route::post('/finish-bookappoinment/{id}', [BookAppoinmentController::class, 'finishBookAppoinment'])->middleware(['auth:sanctum']);
+Route::post('/accept-bookappoinment/{order_id}', [BookAppoinmentController::class, 'acceptBookAppoinment'])->middleware(['auth:sanctum']);
+Route::post('/reject-bookappoinment/{order_id}', [BookAppoinmentController::class, 'rejectBookAppoinment'])->middleware(['auth:sanctum']);
+Route::post('/finish-bookappoinment/{order_id}', [BookAppoinmentController::class, 'finishBookAppoinment'])->middleware(['auth:sanctum']);
 Route::get('/get-all-bookappoinment', [BookAppoinmentController::class, 'getAllBookAppoinment'])->middleware(['auth:sanctum']);
 Route::get('/get-today-bookappoinment', [BookAppoinmentController::class, 'getTodayBookAppoinment'])->middleware(['auth:sanctum']);
 Route::get('/get-user-bookappoinment', [BookAppoinmentController::class, 'getAllUserBookAppoinment'])->middleware(['auth:sanctum']);
@@ -119,6 +120,10 @@ Route::get('/get-product/{id}', [ProductController::class, 'getProduct'])->middl
 Route::delete('/delete-product/{id}', [ProductController::class, 'deleteProduct'])->middleware(['auth:sanctum']);
 Route::post('/edit-product/{id}', [ProductController::class, 'editProduct'])->middleware(['auth:sanctum']);
 Route::get('/product-form', [ProductController::class, 'getProductForm']);
+    //WISHLIST
+    Route::post('/add-wishlist', [WishlistController::class, 'addWishlist'])->middleware(['auth:sanctum']);
+    Route::get('/get-wishlist', [WishlistController::class, 'getWishlist'])->middleware(['auth:sanctum']);
+    Route::delete('/remove-wishlist', [WishlistController::class, 'removeWishlist'])->middleware(['auth:sanctum']);
 
 //ORDER
 Route::post('/create-order', [OrderController::class, 'store'])->middleware('auth:sanctum');
