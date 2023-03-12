@@ -130,10 +130,72 @@ class BookAppoinmentController extends Controller
 
     public function getAllBookAppoinment(){
         try{
-            if (Auth::user()->role == 'petshop_owner') {
-                $data = BookAppoinment::where('doctor', Auth::user()->petshop_id)->get();
+            if (Auth::user()->hasRole('petshop_owner')) {
+                $data = BookAppoinment::where('petshop_id', Auth::user()->petshop_id)->where('status', 'accepted')->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
             } else {
-                $data = BookAppoinment::where('doctor', Auth::user()->id)->get();
+                $data = BookAppoinment::where('doctor', Auth::user()->id)->where('status', 'accepted')->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
+            }
+
+            $response = [];
+            foreach($data as $d) {
+                $doctor = User::where('id', $d->doctor)->first();
+                $orderCollection = Order::where('order_id', $d->order_id)->get();
+                $orderArray = [];
+                foreach ($orderCollection as $order) {
+                        array_push($orderArray, [
+                            'order_id' => $order->order_id,
+                            'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
+                            'type' => $order->type,
+                            'time' => $order->updated_at->format('H:i'),
+                        ]);
+                if ($order->transaction_status === 'settlement') {
+                    $petCollection = Pet::where('id', $d->pets)->get();
+                    $petArray = [];
+                    foreach ($petCollection as $pet) {
+                        array_push($petArray, [
+                            'pet_name' => $pet->pet_name,
+                            'pet_image' => $pet->pet_image,
+                            'pet_weight' => $pet->weight,
+                            'pet_age' => $pet->age,
+                        ]);
+                    }
+                    $petshopCollection = Petshop::where('id', $doctor->petshop_id)->get();
+                    $petshopArray = [];
+                    foreach ($petshopCollection as $petshop) {
+                        array_push($petshopArray, [
+                            'petshop_name' => $petshop->petshop_name,
+                        ]);
+                    }
+                    array_push($response, [
+                        'doctor' => $doctor->name,
+                        'date' => $d->date,
+                        'shift' => $d->shift,
+                        'complaint' => $d->complaint,
+                        'status' => $d->status,
+                        'links' => 'book-appointment/' . $d->order_id,
+                        'pets' => $petArray,
+                        'orders' => $orderArray,
+                        'petshop' => $petshopArray,
+                    ]);
+                }
+                }
+            }
+            return response()->json($response);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+    
+    public function getTodayBookAppoinment(){
+        try{
+            if (Auth::user()->hasRole('petshop_owner')) {
+                $data = BookAppoinment::where('petshop_id', Auth::user()->petshop_id)->where('status', 'accepted')->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
+            } else {
+                $data = BookAppoinment::where('doctor', Auth::user()->id)->where('status', 'accepted')->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
             }
 
             $response = [];
@@ -188,7 +250,6 @@ class BookAppoinmentController extends Controller
             ], 500);
         }
     }
-    
     public function getAllUserBookAppoinment(){
         try{
             $data = BookAppoinment::where('user_id', Auth::user()->id)->get();
@@ -246,10 +307,10 @@ class BookAppoinmentController extends Controller
         }
     }
 
-    public function getBookAppoinment($id)
+    public function getBookAppoinment($order_id)
     {
         try{
-            $d = BookAppoinment::find($id);
+            $d = BookAppoinment::where('order_id', $order_id)->first();
             // dd($data);
             $doctor = User::where('id', $d->doctor)->first();
             $order = Order::where('order_id', $d->order_id)->first();

@@ -113,7 +113,8 @@ class UserController extends Controller
     }
 
     public function getCurrentUser(){
-        $user = Auth::user()->with(['roles:name'])->first();
+        $user = Auth::user();
+        $userrole = Auth::user()->roles;
         // dd($user);
         return response()->json([
             'data' => $user,
