@@ -68,20 +68,20 @@ class BookAppoinmentController extends Controller
             ],
         ];
 
-        // $midtransResponse = Snap::createTransaction($midtransParams);
-        // $midtransSnapToken = $midtransResponse->token;
-        // $paymentUrl = $midtransResponse->redirect_url;
+        $midtransResponse = Snap::createTransaction($midtransParams);
+        $midtransSnapToken = $midtransResponse->token;
+        $paymentUrl = $midtransResponse->redirect_url;
 
-        // // Store the Midtrans token, transaction ID, and payment URL in the order
-        // $order->midtrans_token = $midtransSnapToken;
-        // $order->payment_url = $paymentUrl;
-        // $order->save();
+        // Store the Midtrans token, transaction ID, and payment URL in the order
+        $order->midtrans_token = $midtransSnapToken;
+        $order->payment_url = $paymentUrl;
+        $order->save();
 
         // Return the Midtrans Snap token to the client
         return response()->json([
             'data' => $book_appoinment,
-            // 'midtrans_token' => $midtransSnapToken, 
-            // 'payment_url' => $paymentUrl
+            'midtrans_token' => $midtransSnapToken, 
+            'payment_url' => $paymentUrl
         ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
@@ -195,11 +195,11 @@ class BookAppoinmentController extends Controller
                 foreach ($orderCollection as $order) {
                         array_push($orderArray, [
                             'order_id' => $order->order_id,
-                            'amount' => $order->gross_amount,
+                            'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
                             'type' => $order->type,
                             'time' => $order->updated_at->format('H:i')
                         ]);
-                if ($order->transaction_status === 'settlement') {
+                if ($order->transaction_status === null) {
                     $petCollection = Pet::where('id', $d->pets)->get();
                     $petArray = [];
                     foreach ($petCollection as $pet) {
