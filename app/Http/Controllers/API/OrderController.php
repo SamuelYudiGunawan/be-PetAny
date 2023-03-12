@@ -43,11 +43,12 @@ class OrderController extends Controller
 
         $order = Order::create([
             'user_id' => Auth::user()->id,
-            'product' => $product->id,
+            'product_id' => $request->id,
             'type' => 'product',
             'gross_amount' =>  $grossAmount, 
             'payment_url' => null,
             'order_id' => $orderId,
+            'quantity' => $request->quantity,
         ]);
 
         $midtransParams = [
@@ -161,4 +162,225 @@ class OrderController extends Controller
             ], 200);
         }
     }
+
+    public function acceptProduct($order_id){
+        try {
+        $order = Order::where('order_id', $order_id)->first();
+        $product = Product::where('product_id', $order->product_id)->first();
+        
+        $order->update([
+            'product_status' => 'pengemasan',
+        ]);
+
+        $product->update([
+            'stock' => $product->stock -= $order->quantity,
+        ]);
+
+        $notification = Notifications::create([
+            'user_id' => $product->user_id,
+            'petshop_id' => $product->petshop_id,
+            'title' => 'Product Order Accepted',
+            'body' => 'Your product order ' . $product->name . ' is Accepted',
+        ]);
+
+
+        return response()->json([
+            'message' => 'Product Order Accepted',
+        ]);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
+    public function rejectProduct($order_id){
+        try {
+        $order = Order::where('order_id', $order_id)->first();
+        $product = Product::where('product_id', $order->product_id)->first();
+
+        $order->update([
+            'product_status' => 'rejected',
+        ]);
+
+        $notification = Notifications::create([
+            'user_id' => $product->user_id,
+            'petshop_id' => $product->petshop_id,
+            'title' => 'Product Order Rejected',
+            'body' => 'Your product order ' . $product->name . ' is rejected',
+        ]);
+
+
+        return response()->json([
+            'message' => 'Product Order Accepted',
+        ]);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
+    public function sendProduct($order_id){
+        try {
+        $order = Order::where('order_id', $order_id)->first();
+        $product = Product::where('product_id', $order->product_id)->first();
+        
+        $order->update([
+            'product_status' => 'pengiriman',
+        ]);
+
+        $notification = Notifications::create([
+            'user_id' => $product->user_id,
+            'petshop_id' => $product->petshop_id,
+            'title' => 'Product Order On Delivery',
+            'body' => 'Your product order ' . $product->name . ' is on Delivery',
+        ]);
+
+
+        return response()->json([
+            'message' => 'Product Order On Delivery',
+        ]);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
+    public function finishProduct($order_id){
+        try {
+        $order = Order::where('order_id', $order_id)->first();
+        $product = Product::where('product_id', $order->product_id)->first();
+        
+        $order->update([
+            'product_status' => 'pesanan selesai',
+        ]);
+
+        $notification = Notifications::create([
+            'user_id' => $product->user_id,
+            'petshop_id' => $product->petshop_id,
+            'title' => 'Product Order Finished',
+            'body' => 'Product order ' . $product->name . ' is Finished',
+        ]);
+
+        return response()->json([
+            'message' => 'Product Order On Delivery',
+        ]);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
+    public function getAllOrder(){
+        try{
+            $data = Order::where('type', 'product')->where('transaction_status', 'settlement')->with('product')->get();
+            $response = [];
+    
+            foreach($data as $d) {
+                array_push($response, [
+                    'data' => $d,
+                ]);
+            }
+    
+            return response()->json($response);
+    
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+    
+    public function getWaitingConfirmations(){
+        try{
+            $data = Order::where('type', 'product')->where('transaction_status', 'settlement')->where('product_status', 'Menunggu Konfirmasi')->with('product')->get();
+            $response = [];
+            foreach($data as $d) {
+                array_push($response, [
+                    'data' => $d,
+                ]);
+            }
+            return response()->json($response);
+    
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+    
+    public function getPackagings(){
+        try{
+            $data = Order::where('type', 'product')->where('transaction_status', 'settlement')->where('product_status', 'Pengemasan')->with('product')->get();
+            $response = [];
+            foreach($data as $d) {
+                array_push($response, [
+                    'data' => $d,
+                ]);
+            }
+            return response()->json($response);
+    
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+    
+    public function getDeliveries(){
+        try{
+            $data = Order::where('type', 'product')->where('transaction_status', 'settlement')->where('product_status', 'Pengiriman')->with('product')->get();
+            $response = [];
+            foreach($data as $d) {
+                array_push($response, [
+                    'data' => $d,
+                ]);
+            }
+            return response()->json($response);
+    
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+    
+    public function getCompletedOrders(){
+        try{
+            $data = Order::where('type', 'product')->where('transaction_status', 'settlement')->where('product_status', 'Pesanan Selesai')->with('product')->get();
+            $response = [];
+            foreach($data as $d) {
+                array_push($response, [
+                    'data' => $d,
+                ]);
+            }
+            return response()->json($response);
+    
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }    
 }

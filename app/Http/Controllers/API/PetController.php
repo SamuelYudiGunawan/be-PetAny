@@ -177,6 +177,36 @@ class PetController extends Controller
         }
     }
 
+    public function getAllPets(){
+        try{
+            $data = Pet::with('user_id:id,name')->get();
+            $response = [];
+            foreach ($data as $d) {
+                array_push($response, [
+                    'id' => $d->id,
+                    'user_id' => $d->user_id,
+                    'pet_name' => $d->pet_name,
+                    'pet_image' => $d->pet_image,
+                    'age' => $d->age,
+                    'allergies' => $d->allergies,
+                    'pet_genus' => $d->pet_genus,
+                    'pet_species' => $d->pet_species,
+                    'weight' => $d->weight,
+                    'links' => [
+                        'self' => '/api/get-pet/' . $d->id,
+                    ],
+                ]);
+            }    
+        return response()->json($response);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
     public function getPet($id)
     {
         try{
