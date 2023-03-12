@@ -68,20 +68,20 @@ class BookAppoinmentController extends Controller
             ],
         ];
 
-        $midtransResponse = Snap::createTransaction($midtransParams);
-        $midtransSnapToken = $midtransResponse->token;
-        $paymentUrl = $midtransResponse->redirect_url;
+        // $midtransResponse = Snap::createTransaction($midtransParams);
+        // $midtransSnapToken = $midtransResponse->token;
+        // $paymentUrl = $midtransResponse->redirect_url;
 
-        // Store the Midtrans token, transaction ID, and payment URL in the order
-        $order->midtrans_token = $midtransSnapToken;
-        $order->payment_url = $paymentUrl;
-        $order->save();
+        // // Store the Midtrans token, transaction ID, and payment URL in the order
+        // $order->midtrans_token = $midtransSnapToken;
+        // $order->payment_url = $paymentUrl;
+        // $order->save();
 
         // Return the Midtrans Snap token to the client
         return response()->json([
             'data' => $book_appoinment,
-            'midtrans_token' => $midtransSnapToken, 
-            'payment_url' => $paymentUrl
+            // 'midtrans_token' => $midtransSnapToken, 
+            // 'payment_url' => $paymentUrl
         ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
@@ -184,6 +184,61 @@ class BookAppoinmentController extends Controller
         }
     }
     
+    public function getAllUserBookAppoinment(){
+        try{
+            $data = BookAppoinment::where('user_id', Auth::user()->id)->get();
+            $response = [];
+            foreach($data as $d) {
+                $doctor = User::where('id', $d->doctor)->first();
+                $orderCollection = Order::where('order_id', $d->order_id)->get();
+                $orderArray = [];
+                foreach ($orderCollection as $order) {
+                        array_push($orderArray, [
+                            'order_id' => $order->order_id,
+                            'amount' => $order->gross_amount,
+                            'type' => $order->type,
+                            'time' => $order->updated_at->format('H:i')
+                        ]);
+                if ($order->transaction_status === 'settlement') {
+                    $petCollection = Pet::where('id', $d->pets)->get();
+                    $petArray = [];
+                    foreach ($petCollection as $pet) {
+                        array_push($petArray, [
+                            'pet_name' => $pet->pet_name,
+                            'pet_image' => $pet->pet_image,
+                            'pet_weight' => $pet->weight,
+                            'pet_age' => $pet->age,
+                        ]);
+                    }
+                    $petshopCollection = Petshop::where('id', $doctor->petshop_id)->get();
+                    $petshopArray = [];
+                    foreach ($petshopCollection as $petshop) {
+                        array_push($petshopArray, [
+                            'petshop_name' => $petshop->petshop_name,
+                        ]);
+                    }
+                    array_push($response, [
+                        'doctor' => $doctor->name,
+                        'date' => $d->date,
+                        'shift' => $d->shift,
+                        'complaint' => $d->complaint,
+                        'pets' => $petArray,
+                        'orders' => $orderArray,
+                        'petshop' => $petshopArray,
+                    ]);
+                }
+                }
+                
+            }
+            return response()->json($response);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
 
     public function getBookAppoinment($id)
     {
