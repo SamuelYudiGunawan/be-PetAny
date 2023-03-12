@@ -195,10 +195,17 @@ class BookAppoinmentController extends Controller
     
     public function getTodayBookAppoinment(){
         try{
+            // $date = Carbon::createFromFormat('l, j M');
             if (Auth::user()->hasRole('petshop_owner')) {
-                $data = BookAppoinment::where('petshop_id', Auth::user()->petshop_id)->where('status', 'accepted')->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
+                // $data = BookAppoinment::where('petshop_id', Auth::user()->petshop_id)->where('status', 'accepted')->orderBy($date, 'ASC')->get();
+                // ->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
+                $data = BookAppoinment::where('petshop_id', Auth::user()->petshop_id)
+                ->where('status', 'accepted')
+                ->orderByRaw("STR_TO_DATE(SUBSTRING_INDEX(date, ', ', -1), '%e %b') ASC")
+                ->get();
+
             } else {
-                $data = BookAppoinment::where('doctor', Auth::user()->id)->where('status', 'accepted')->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
+                $data = BookAppoinment::where('doctor', Auth::user()->id)->where('status', 'accepted')->orderBy('date', 'ASC')->get();
             }
 
             $response = [];
@@ -213,7 +220,7 @@ class BookAppoinmentController extends Controller
                             'type' => $order->type,
                             'time' => $order->updated_at->format('H:i'),
                         ]);
-                if ($order->transaction_status === 'settlement') {
+                if ($order->transaction_status === 'treatment') {
                     $petCollection = Pet::where('id', $d->pets)->get();
                     $petArray = [];
                     foreach ($petCollection as $pet) {
@@ -222,6 +229,7 @@ class BookAppoinmentController extends Controller
                             'pet_image' => $pet->pet_image,
                             'pet_weight' => $pet->weight,
                             'pet_age' => $pet->age,
+                            'add_medical_record' => '/petshop/add-medicalrecord?pet_id=' . $pet->id, 
                         ]);
                     }
                     $petshopCollection = Petshop::where('id', $doctor->petshop_id)->get();
