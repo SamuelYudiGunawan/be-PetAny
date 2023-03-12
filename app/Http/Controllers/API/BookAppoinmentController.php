@@ -228,6 +228,7 @@ class BookAppoinmentController extends Controller
                         'shift' => $d->shift,
                         'complaint' => $d->complaint,
                         'status' => $d->status,
+                        'links' => 'book-appointment/' . $d->order_id,
                         'pets' => $petArray,
                         'orders' => $orderArray,
                         'petshop' => $petshopArray,
@@ -248,10 +249,27 @@ class BookAppoinmentController extends Controller
     public function getBookAppoinment($id)
     {
         try{
-            $data = BookAppoinment::with('user_id:id,name')->find($id);
-                    
+            $d = BookAppoinment::find($id);
+            // dd($data);
+            $doctor = User::where('id', $d->doctor)->first();
+            $order = Order::where('order_id', $d->order_id)->first();
+            $pet = Pet::where('id', $d->pets)->first();
+            $petshop = Petshop::where('id', $doctor->petshop_id)->first();
             return response()->json([
-                'data' => $data,
+                'doctor' => $doctor->name,
+                'date' => $d->date,
+                'shift' => $d->shift,
+                'complaint' => $d->complaint,
+                'status' => $d->status,
+                'pet_name' => $pet->pet_name,
+                'pet_image' => $pet->pet_image,
+                'pet_weight' => $pet->weight,
+                'pet_age' => $pet->age,
+                'order_id' => $order->order_id,
+                'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
+                'type' => $order->type,
+                'time' => $order->updated_at->format('H:i'),
+                'petshop_name' => $petshop->petshop_name,
             ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
