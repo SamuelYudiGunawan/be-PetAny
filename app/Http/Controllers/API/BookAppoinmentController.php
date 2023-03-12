@@ -344,9 +344,9 @@ class BookAppoinmentController extends Controller
         }
     }
 
-    public function acceptBookAppoinment($id){
+    public function acceptBookAppoinment($order_id){
         try {
-        $book_appoinment = BookAppoinment::find($id);
+        $book_appoinment = BookAppoinment::find($order_id);
         
         $book_appoinment->update([
             'status' => 'accepted',
@@ -371,9 +371,9 @@ class BookAppoinmentController extends Controller
         }
     }
 
-    public function rejectBookAppoinment($id){
+    public function rejectBookAppoinment($order_id){
         try {
-        $book_appoinment = BookAppoinment::find($id);
+        $book_appoinment = BookAppoinment::find($order_id);
         
         $book_appoinment->update([
             'status' => 'rejected',
@@ -398,9 +398,9 @@ class BookAppoinmentController extends Controller
         }
     }
     
-    public function finishBookAppointment($id){
+    public function finishBookAppointment($order_id){
         try {
-        $book_appoinment = BookAppoinment::find($id);
+        $book_appoinment = BookAppoinment::find($order_id);
         
         $book_appoinment->update([
             'status' => 'finished',
