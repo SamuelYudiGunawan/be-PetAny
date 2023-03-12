@@ -205,7 +205,10 @@ class BookAppoinmentController extends Controller
                 ->get();
 
             } else {
-                $data = BookAppoinment::where('doctor', Auth::user()->id)->where('status', 'accepted')->orderBy('date', 'ASC')->get();
+                $data = BookAppoinment::where('doctor', Auth::user()->id)                
+                ->where('status', 'accepted')
+                ->orderByRaw("STR_TO_DATE(SUBSTRING_INDEX(date, ', ', -1), '%e %b') ASC")
+                ->get();
             }
 
             $response = [];
