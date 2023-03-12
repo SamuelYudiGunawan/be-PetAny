@@ -68,7 +68,7 @@ class OrderController extends Controller
 
         // Return the Midtrans Snap token to the client
         return response()->json([
-            'data' => $book_appoinment,
+            'data' => $product,
             'midtrans_token' => $midtransSnapToken, 
             'payment_url' => $paymentUrl
         ]);
