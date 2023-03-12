@@ -76,7 +76,7 @@ class ProductController extends Controller
 
     public function getPetshopProduct(){
         try{
-            $data = Product::where('petshop_id', Auth::user()->petshop_id)->get();
+            $data = Product::where('petshop_id', Auth::user()->petshop_id)->with('petshop_id')->get();
             $response = [];
             foreach ($data as $d) {
                 array_push($response, [
