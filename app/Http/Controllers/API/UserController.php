@@ -36,7 +36,7 @@ class UserController extends Controller
 
         event(new Registered($user));
 
-        $user = User::where('email', $request->email)->firstOrFail();
+        $user = User::with(['roles:name'])->where('email', $request->email)->firstOrFail();
         
         return response()->json([
             'message' => 'Please check your email to verify your account.',
@@ -68,7 +68,7 @@ class UserController extends Controller
             ],);
         }
 
-        $user = User::where('email', $request->email)->firstOrFail();
+        $user = User::with(['roles:name'])->where('email', $request->email)->firstOrFail();
 
         $token = $user->createToken('Token-Register')->plainTextToken;
 
@@ -110,6 +110,14 @@ class UserController extends Controller
                 'message' => $th->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function getCurrentUser(){
+        $user = Auth::user()->with(['roles:name'])->first();
+        // dd($user);
+        return response()->json([
+            'data' => $user,
+        ]);
     }
 
     public function logout(Request $request)

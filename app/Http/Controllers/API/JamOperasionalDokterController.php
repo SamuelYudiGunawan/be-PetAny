@@ -15,6 +15,7 @@ class JamOperasionalDokterController extends Controller
     public function getJamOperasionalDokter($id){
         try {
             $data = JamOperasionalDokter::with('user:id')->where('user_id', $id)->get();
+            $doctor = User::where('id', $id)->first();
             $response = [];
             foreach ($data as $d) {
                 $openTime = Carbon::parse($d->jam_buka)->format('H:i');
@@ -30,9 +31,10 @@ class JamOperasionalDokterController extends Controller
                         'is_open' => $d->is_open == 1 ? true : false,
                 ]);
             }
-        return response()->json(
-            $response
-        );
+        return response()->json([
+            'doctor' => $doctor->name,
+            'jam_operasional' => $response,   
+        ]);
         } catch (\Throwable $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);

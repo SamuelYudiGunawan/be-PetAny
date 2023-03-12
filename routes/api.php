@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // AUTH
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
+Route::get('/get-current-user', [UserController::class, 'getCurrentUser'])->middleware(['auth:sanctum']);
 Route::post('/logout', [UserController::class, 'logout'])->middleware(['auth:sanctum']);
 // ->middleware('verified');
     // VERIFY EMAIL
