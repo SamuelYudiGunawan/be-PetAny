@@ -95,7 +95,7 @@ class PetshopController extends Controller
             if ($request->hasFile('petshop_image')) {
                 $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('petshop_image')) . "." . $request->file('petshop_image')->getClientOriginalExtension();
                 $imagePath = "storage/document/petshop_image/" . $imageName;
-                $request->image->storeAs(
+                $request->petshop_image->storeAs(
                     "public/document/petshop_image",
                     $imageName
                 );
