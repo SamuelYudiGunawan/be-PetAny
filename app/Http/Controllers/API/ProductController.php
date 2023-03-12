@@ -25,18 +25,23 @@ class ProductController extends Controller
 
         try {
 
-        $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('image')) . "." . $request->file('image')->getClientOriginalExtension();
-        $imagePath = "storage/document/product_image/" . $imageName;
-        $request->image->storeAs(
-            "public/document/product_image",
-            $imageName
-        );
+        if ($request->hasFile('image')) {
+            $imageName = Carbon::now()->format('YmdHis') . "_" . md5_file($request->file('image')) . "." . $request->file('image')->getClientOriginalExtension();
+            $imagePath = "storage/document/product_image/" . $imageName;
+            $request->petshop_image->storeAs(
+                "public/document/product_image",
+                $imageName
+            );
+            $product_image = url('/').'/'.$imagePath;
+            $petshop->image = $product_image;
+            $petshop->save();
+        }
         $user = Auth::user();
         $product = Product::create([
             'petshop_id' => $user->petshop_id,
             'name' => $request->name,
             'description' => $request->description,
-            'image' => url('/').'/'.$imagePath,
+            // 'image' => url('/').'/'.$imagePath,
             'stock' => $request->stock,
             'price' => $request->price,
         ]);
