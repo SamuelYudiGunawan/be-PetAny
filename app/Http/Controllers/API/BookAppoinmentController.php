@@ -31,14 +31,17 @@ class BookAppoinmentController extends Controller
         try {
         $orderId = 'BOOK_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
 
+        $doctor = User::where('id', $request->doctor)->first();
+
         $book_appoinment = BookAppoinment::create([
             'user_id' => Auth::user()->id,
-            'doctor' => $request->doctor,
+            'doctor' => $doctor->id,
             'date' => $request->date,
             'pets' => $request->pets,
             'complaint' => $request->complaint,
             'shift' => $request->shift,
             'order_id' => $orderId,
+            'petshop_id' => $doctor->petshop_id,
         ]);
         
         // Set your Merchant Server Key
