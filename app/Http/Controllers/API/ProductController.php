@@ -59,8 +59,6 @@ class ProductController extends Controller
             $data = Product::where('stock', '>=', 1)->get();
             $response = [];
             foreach ($data as $d) {
-                $petshop_name = Str::slug($d->petshop->petshop_name);
-                $product_name = Str::slug($d->name);
                 array_push($response, [
                     'data' => $d,
                     'links' => '/api/get-product/' . $d->id,
