@@ -134,10 +134,10 @@ Route::get('/get-menunggu-konfirmasi', [OrderController::class, 'getWaitingConfi
 Route::get('/get-pengemasan', [OrderController::class, 'getPackagings'])->middleware('auth:sanctum');
 Route::get('/get-pengiriman', [OrderController::class, 'getDeliveries'])->middleware('auth:sanctum');
 Route::get('/get-selesai', [OrderController::class, 'getCompletedOrders'])->middleware('auth:sanctum');
-Route::post('/reject-order', [OrderController::class, 'rejectProduct'])->middleware('auth:sanctum');
-Route::post('/accept-order', [OrderController::class, 'acceptProduct'])->middleware('auth:sanctum');
-Route::post('/update-pengiriman', [OrderController::class, 'sendProduct'])->middleware('auth:sanctum');
-Route::post('/update-selesai', [OrderController::class, 'finishProduct'])->middleware('auth:sanctum');
+Route::post('/reject-order/{order_id}', [OrderController::class, 'rejectProduct'])->middleware('auth:sanctum');
+Route::post('/accept-order/{order_id}', [OrderController::class, 'acceptProduct'])->middleware('auth:sanctum');
+Route::post('/update-pengiriman/{order_id}', [OrderController::class, 'sendProduct'])->middleware('auth:sanctum');
+Route::post('/update-selesai/{order_id}', [OrderController::class, 'finishProduct'])->middleware('auth:sanctum');
 Route::post('/midtrans/handle-notification', [OrderController::class, 'handleMidtransNotification']);
 
 //NOTIFICATION
