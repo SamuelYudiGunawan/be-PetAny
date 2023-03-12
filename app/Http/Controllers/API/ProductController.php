@@ -79,12 +79,9 @@ class ProductController extends Controller
             $data = Product::where('petshop_id', Auth::user()->petshop_id)->get();
             $response = [];
             foreach ($data as $d) {
-            $petshop = Petshop::where('id', $d->petshop_id)->first();
-            $petshop_name = Str::slug($petshop->petshop_name);
-            $product_name = Str::slug($d->name);
                 array_push($response, [
                     'data' => $d,
-                    'links' => '/' . $petshop_name . '/' . $product_name,
+                    'links' => '/api/get-product/' . $d->id,
                 ]);
             }
             return response()->json($response);
