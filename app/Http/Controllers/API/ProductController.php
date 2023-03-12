@@ -36,7 +36,7 @@ class ProductController extends Controller
         }
         $user = Auth::user();
         $product = Product::create([
-            'petshop_id' => $user->petshop_id,
+            'petshop_id' => $request->petshop_id,
             'name' => $request->name,
             'description' => $request->description,
             'image' => $image,
