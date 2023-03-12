@@ -228,7 +228,7 @@ class BookAppoinmentController extends Controller
                         'shift' => $d->shift,
                         'complaint' => $d->complaint,
                         'status' => $d->status,
-                        'links' => 'book-appointment/' . $d->id,
+                        'links' => 'book-appointment/' . $d->order_id,
                         'pets' => $petArray,
                         'orders' => $orderArray,
                         'petshop' => $petshopArray,
