@@ -55,13 +55,12 @@ class ProductController extends Controller
         }
     }
     public function getAllProduct(){
-        try{
-            $data = Product::where('stock', '>=', 1)->with('petshop_id')->get();
+        try {
+            $data = Product::where('stock', '>=', 1)->get();
             $response = [];
             foreach ($data as $d) {
-            $petshop = Petshop::where('id', $d->petshop_id)->first();
-            $petshop_name = Str::slug($petshop->petshop_name);
-            $product_name = Str::slug($d->name);
+                $petshop_name = Str::slug($d->petshop->petshop_name);
+                $product_name = Str::slug($d->name);
                 array_push($response, [
                     'data' => $d,
                     'links' => '/api/get-product/' . $d->id,
@@ -76,6 +75,7 @@ class ProductController extends Controller
             ], 500);
         }
     }
+    
 
     public function getPetshopProduct(){
         try{
