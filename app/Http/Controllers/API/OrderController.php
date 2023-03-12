@@ -21,15 +21,13 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function checkoutProduct(){
-    try {
-
+    public function checkoutProduct(Request $request){
         $request->validate([
             'product_id' => 'nullable|exists:products,id',
             'quantity' => 'nullable|integer|min:1',
         ]);
-
-        $product = Product::findOrFail($request->product_id);
+    try {
+        $product = Product::findOrFail($request->product_id);    
         $grossAmount = $product->price * $request->quantity;
 
         // Set your Merchant Server Key
