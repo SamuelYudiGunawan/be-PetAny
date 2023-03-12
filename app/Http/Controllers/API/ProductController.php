@@ -32,8 +32,8 @@ class ProductController extends Controller
                 "public/document/product_image",
                 $imageName
             );
-            $product_image = url('/').'/'.$imagePath;
-            $petshop->image = $product_image;
+            $image = url('/').'/'.$imagePath;
+            $petshop->image = $image;
             $petshop->save();
         }
         $user = Auth::user();
