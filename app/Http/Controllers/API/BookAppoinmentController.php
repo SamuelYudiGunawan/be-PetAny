@@ -408,8 +408,8 @@ class BookAppoinmentController extends Controller
             ], 500);
         }
     }
-    
-    public function finishBookAppointment($order_id){
+
+    public function finishBookAppoinment($order_id){
         try {
         $book_appoinment = BookAppoinment::find($order_id);
         
