@@ -91,6 +91,7 @@ Route::post('/add-pet', [PetController::class, 'addPet'])->middleware(['auth:san
 Route::delete('/delete-pet/{id}', [PetController::class, 'deletePet'])->middleware(['auth:sanctum']);
 Route::post('/edit-pet/{id}', [PetController::class, 'editPet'])->middleware(['auth:sanctum']);
 Route::get('/get-pet', [PetController::class, 'getAllPet'])->middleware(['auth:sanctum']);
+Route::get('/get-all-pet', [PetController::class, 'getAllPets'])->middleware(['auth:sanctum']);
 Route::get('/get-pet/{id}', [PetController::class, 'getPet'])->middleware(['auth:sanctum']);
 Route::get('/pet-form', [PetController::class, 'getPetForm']);
 
@@ -127,6 +128,11 @@ Route::get('/product-form', [ProductController::class, 'getProductForm']);
 
 //ORDER
 Route::post('/create-order', [OrderController::class, 'checkoutProduct'])->middleware('auth:sanctum');
+Route::get('/get-all-order', [OrderController::class, 'getAllOrder'])->middleware('auth:sanctum');
+Route::get('/get-menunggu-konfirmasi', [OrderController::class, 'getWaitingConfirmations']);
+Route::get('/get-pengemasan', [OrderController::class, 'getPackagings']);
+Route::get('/get-pengiriman', [OrderController::class, 'getDeliveries']);
+Route::get('/get-selesai', [OrderController::class, 'getCompletedOrders']);
 Route::post('/midtrans/handle-notification', [OrderController::class, 'handleMidtransNotification']);
 
 //NOTIFICATION

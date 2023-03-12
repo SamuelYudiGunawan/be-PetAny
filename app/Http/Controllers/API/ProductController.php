@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Petshop;
 use App\Models\Product;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -55,26 +57,18 @@ class ProductController extends Controller
     }
     public function getAllProduct(){
         try{
-            $data = Product::with('petshop_id:id,id')->get();
+            $data = Product::where('stock', '>=', 1)->with('petshop_id')->get();
             $response = [];
             foreach ($data as $d) {
+            $petshop = Petshop::where('id', $d->petshop_id)->first();
+            $petshop_name = Str::slug($petshop->petshop_name);
+            $product_name = Str::slug($d->name);
                 array_push($response, [
-                    'petshop_id' => $d->petshop_id,
-                    'name' => $d->name,
-                    'description' => $d->description,
-                    'image' => $d->image,
-                    'stock' => $d->stock,
-                    'price' => $d->price,
-                    'location' => $d->location,
-                    'category' => $d->category,
-                    'links' => [
-                        'self' => '/api/get-product/' . $d->id,
-                    ],
+                    'data' => $d,
+                    'links' => '/' . $petshop_name . '/' . $product_name,
                 ]);
             }
-            return response()->json([
-                $response
-            ]);
+            return response()->json($response);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);
@@ -89,18 +83,8 @@ class ProductController extends Controller
         try{
             $d = Product::with('petshop_id:id')->find($id)->first();
             return response()->json([
-                'petshop_id' => $d->petshop_id,
-                'name' => $d->name,
-                'description' => $d->description,
-                'image' => $d->image,
-                'stock' => $d->stock,
-                'price' => $d->price,
-                'location' => $d->location,
-                'category' => $d->category,
-                'links' => [
-                    'add_wishlist' => 'api/add-wishlist?product_id=' . $d->id,
-                    'add_cart' => 'api/add-cart?product_id=' . $d->id,
-                ],
+                'data' => $d,
+                'links' => 'api/add-wishlist?product_id=' . $d->id,
             ]);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
