@@ -130,10 +130,14 @@ Route::get('/product-form', [ProductController::class, 'getProductForm']);
 //ORDER
 Route::post('/create-order', [OrderController::class, 'checkoutProduct'])->middleware('auth:sanctum');
 Route::get('/get-all-order', [OrderController::class, 'getAllOrder'])->middleware('auth:sanctum');
-Route::get('/get-menunggu-konfirmasi', [OrderController::class, 'getWaitingConfirmations']);
-Route::get('/get-pengemasan', [OrderController::class, 'getPackagings']);
-Route::get('/get-pengiriman', [OrderController::class, 'getDeliveries']);
-Route::get('/get-selesai', [OrderController::class, 'getCompletedOrders']);
+Route::get('/get-menunggu-konfirmasi', [OrderController::class, 'getWaitingConfirmations'])->middleware('auth:sanctum');
+Route::get('/get-pengemasan', [OrderController::class, 'getPackagings'])->middleware('auth:sanctum');
+Route::get('/get-pengiriman', [OrderController::class, 'getDeliveries'])->middleware('auth:sanctum');
+Route::get('/get-selesai', [OrderController::class, 'getCompletedOrders'])->middleware('auth:sanctum');
+Route::post('/reject-order', [OrderController::class, 'rejectProduct'])->middleware('auth:sanctum');
+Route::post('/accept-order', [OrderController::class, 'acceptProduct'])->middleware('auth:sanctum');
+Route::post('/update-pengiriman', [OrderController::class, 'sendProduct'])->middleware('auth:sanctum');
+Route::post('/update-selesai', [OrderController::class, 'finishProduct'])->middleware('auth:sanctum');
 Route::post('/midtrans/handle-notification', [OrderController::class, 'handleMidtransNotification']);
 
 //NOTIFICATION
