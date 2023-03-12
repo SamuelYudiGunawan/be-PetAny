@@ -146,7 +146,8 @@ class BookAppoinmentController extends Controller
                             'order_id' => $order->order_id,
                             'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
                             'type' => $order->type,
-                            'time' => $order->updated_at->format('H:i')
+                            'time' => $order->updated_at->format('H:i'),
+                            'status' => $order->status,
                         ]);
                 if ($order->transaction_status === 'settlement') {
                     $petCollection = Pet::where('id', $d->pets)->get();
@@ -201,7 +202,8 @@ class BookAppoinmentController extends Controller
                             'order_id' => $order->order_id,
                             'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
                             'type' => $order->type,
-                            'time' => $order->updated_at->format('H:i')
+                            'time' => $order->updated_at->format('H:i'),
+                            'status' => $order->status,
                         ]);
                 if ($order->transaction_status === 'settlement') {
                     $petCollection = Pet::where('id', $d->pets)->get();
