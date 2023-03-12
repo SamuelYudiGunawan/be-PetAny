@@ -131,9 +131,9 @@ class BookAppoinmentController extends Controller
     public function getAllBookAppoinment(){
         try{
             if (Auth::user()->hasRole('petshop_owner')) {
-                $data = BookAppoinment::where('petshop_id', Auth::user()->petshop_id)->where('status', 'accepted')->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
+                $data = BookAppoinment::where('petshop_id', Auth::user()->petshop_id)->get();
             } else {
-                $data = BookAppoinment::where('doctor', Auth::user()->id)->where('status', 'accepted')->where('date', Carbon::now()->translatedFormat('l, j M'))->get();
+                $data = BookAppoinment::where('doctor', Auth::user()->id)->get();
             }
 
             $response = [];
