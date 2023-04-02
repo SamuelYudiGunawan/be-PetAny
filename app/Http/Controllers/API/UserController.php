@@ -65,7 +65,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Email or Password does not match.',
-            ],);
+            ], 500);
         }
 
         $user = User::with(['roles:name'])->where('email', $request->email)->firstOrFail();
