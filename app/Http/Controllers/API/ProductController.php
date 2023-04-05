@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Petshop;
 use App\Models\Product;
