@@ -18,7 +18,7 @@ class ProductController extends Controller
             'petshop_id' => 'required|string',
             'name' => 'required|string',
             'description' => 'required|string',
-            'image' => 'required|file|mimes:png,jpg',
+            'image' => 'required|file|mimes:png,jpg,jpeg|max:1024',
             'stock' => 'required|string',
             'price' => 'required|string',
         ]);
@@ -116,7 +116,7 @@ class ProductController extends Controller
     $request->validate([
         'name' => 'string',
         'description' => 'string',
-        'image' => 'file|mimes:png,jpg',
+        'image' => 'file|mimes:png,jpg,jpeg|max:1024',
         'price' => 'string',
         'category' => 'string',
     ]);
