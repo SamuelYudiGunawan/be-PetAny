@@ -181,11 +181,12 @@ class ProductController extends Controller
             $data = Order::where('user_id', Auth::user()->id)->get();
             $response = [];
             foreach($data as $d) {
-                $petshops = User::where('id', $d->petshop_id)->first();
+                
                 $orderCollection = Order::where('order_id', $d->order_id)->get();
                 foreach ($orderCollection as $order) {
                 if ($order->transaction_status === 'settlement') {
                     $productCollection = Product::where('id', $d->product_id)->get();
+                    $petshops = User::where('id', $productCollection->petshop_id)->first();
                     $productArray = [];
                     foreach ($productCollection as $product) {
                         array_push($productArray, [
