@@ -213,6 +213,7 @@ class ProductController extends Controller
                         'name' => $product->name,
                         'image' => $product->image,
                         'quantity' => $d->quantity,
+                        'amount' => "Rp " . number_format($d->gross_amount, 0, ',', '.'),
                         'orders' => $orderArray,
                         'petshop' => $petshopArray,
                         'product' => $productArray,
