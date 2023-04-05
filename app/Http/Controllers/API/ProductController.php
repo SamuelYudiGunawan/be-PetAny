@@ -181,7 +181,7 @@ class ProductController extends Controller
             $response = [];
             foreach($data as $d) {
                 // $doctor = User::where('id', $d->doctor)->first();
-                // $orderCollection = Order::where('order_id', $d->order_id)->get();
+                $order = Order::where('order_id', $d->order_id)->get();
                 // $orderArray = [];
                 // foreach ($orderCollection as $order) {
                 //         array_push($orderArray, [
