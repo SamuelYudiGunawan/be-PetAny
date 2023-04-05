@@ -186,14 +186,13 @@ class ProductController extends Controller
                 foreach ($orderCollection as $order) {
                 if ($order->transaction_status === 'settlement') {
                     $productCollection = Product::where('id', $d->product_id)->get();
-                    $petshops = User::where('id', $productCollection->petshop_id)->first();
                     $productArray = [];
                     foreach ($productCollection as $product) {
                         array_push($productArray, [
                             'name' => $product->name,
                             'image' => $product->image,
                         ]);
-                    }
+                        $petshops = User::where('id', $productCollection->petshop_id)->first();
                     $petshopCollection = Petshop::where('id', $petshops->petshop_id)->get();
                     $petshopArray = [];
                     foreach ($petshopCollection as $petshop) {
@@ -201,6 +200,7 @@ class ProductController extends Controller
                             'petshop_name' => $petshop->petshop_name,
                         ]);
                     }
+                }
                     array_push($response, [
                         'orders' => $d,
                         'petshop' => $petshopArray,
