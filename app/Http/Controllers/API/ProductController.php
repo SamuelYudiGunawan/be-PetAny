@@ -182,7 +182,16 @@ class ProductController extends Controller
             $response = [];
             foreach($data as $d) {
                 $orderCollection = Order::where('order_id', $d->order_id)->get();
+                $orderArray = [];
                 foreach ($orderCollection as $order) {
+                    array_push($orderArray, [
+                        'order_id' => $order->order_id,
+                        'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
+                        'type' => $order->type,
+                        'time' => $order->updated_at->format('H:i'),
+                        'date' => $order->date,
+                        'quantity' => $order->quantity,
+                    ]);
                 if ($order->transaction_status === 'settlement') {
                     $productCollection = Product::where('id', $d->product_id)->get();
                     $productArray = [];
@@ -200,7 +209,7 @@ class ProductController extends Controller
                         ]);
                     }
                     array_push($response, [
-                        'orders' => $d,
+                        'orders' => $orderArray,
                         'petshop' => $petshopArray,
                         'product' => $productArray,
                         'links' => 'product-transaction/' . $d->order_id,
