@@ -181,7 +181,6 @@ class ProductController extends Controller
             $data = Order::where('user_id', Auth::user()->id)->get();
             $response = [];
             foreach($data as $d) {
-                
                 $orderCollection = Order::where('order_id', $d->order_id)->get();
                 foreach ($orderCollection as $order) {
                 if ($order->transaction_status === 'settlement') {
@@ -200,7 +199,6 @@ class ProductController extends Controller
                             'petshop_name' => $petshop->petshop_name,
                         ]);
                     }
-                }
                     array_push($response, [
                         'orders' => $d,
                         'petshop' => $petshopArray,
@@ -210,6 +208,7 @@ class ProductController extends Controller
                 }
             }
         }
+    }
             return response()->json($response);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
