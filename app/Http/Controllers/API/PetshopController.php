@@ -30,7 +30,7 @@ class PetshopController extends Controller
             'phone_number' => 'required|string',
             'petshop_email' => 'required|email|string|unique:petshops',
             'permit' => 'required|array',
-            'permit.*' => 'required|file',
+            'permit.*' => 'required|file|mimes:pdf|max:1024',
             'province' => 'required|string',
             'city' => 'required|string',
             'district' => 'required|string',
@@ -90,6 +90,9 @@ class PetshopController extends Controller
     public function updatePetshopProfile(Request $request, $id)
     {
         try {
+            $request->validate([
+                'petshop_image' => 'file|mimes:pdf|max:1024'
+            ]);
             $petshop = Petshop::findOrFail($id);
             $petshop_image = null;
             if ($request->hasFile('petshop_image')) {

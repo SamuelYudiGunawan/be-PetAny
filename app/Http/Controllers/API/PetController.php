@@ -16,7 +16,7 @@ class PetController extends Controller
     public function addPet(Request $request){
         $request->validate([
             'pet_name' => 'required|string',
-            'pet_image' => 'required|file|mimes:png,jpg',
+            'pet_image' => 'required|file|mimes:png,jpg,jpeg|max:1024',
             'age' => 'required|int',
             'pet_genus' => 'required|string',
             'pet_species' => 'required|string',
@@ -57,7 +57,7 @@ class PetController extends Controller
     public function editPet(Request $request, $id) {
         $request->validate([
             'pet_name' => 'string',
-            'pet_image' => 'file',
+            'pet_image' => 'file|mimes:jpg,jpeg,png|max:1024',
             'age' =>'string',
             'allergies' => 'string',
             'pet_genus' => 'string',
@@ -273,7 +273,7 @@ class PetController extends Controller
             'description' => 'required|string',
             'treatment' => 'required|string',
             'date' => 'required|date',
-            'attachment.*' => 'required|file',
+            'attachment.*' => 'required|file|mimes:jpg,png,jpeg,pdf|max:1024',
             'pet_id' => 'required|string'
         ]);
 
@@ -319,7 +319,7 @@ class PetController extends Controller
             'description' => 'required|string',
             'treatment' => 'required|string',
             'date' => 'required|date',
-            'attachment.*' => 'required|file',
+            'attachment.*' => 'required|file|mimes:jpg,jpeg,png,pdf|max:1024',
             'pet_id' => 'required|string'
         ]);
         $medical_record = MedicalRecord::find($id);
