@@ -191,6 +191,7 @@ class ProductController extends Controller
                         'time' => $order->updated_at->format('H:i'),
                         'date' => $order->date,
                         'quantity' => $order->quantity,
+                        'status' => $order->transaction_status,
                     ]);
                 if ($order->transaction_status === 'settlement') {
                     $productCollection = Product::where('id', $d->product_id)->get();
