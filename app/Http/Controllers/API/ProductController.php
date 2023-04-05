@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Order;
 use App\Models\Petshop;
 use App\Models\Product;
 use Illuminate\Support\Str;
@@ -165,6 +166,55 @@ class ProductController extends Controller
         }
         $product->delete();
         return response()->json(['message' => 'Product deleted']); 
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
+        }
+    }
+
+    public function getAllUserProductTransaction(){
+        try{
+            $data = Order::where('user_id', Auth::user()->id)->get();
+            $response = [];
+            foreach($data as $d) {
+                // $doctor = User::where('id', $d->doctor)->first();
+                // $orderCollection = Order::where('order_id', $d->order_id)->get();
+                // $orderArray = [];
+                // foreach ($orderCollection as $order) {
+                //         array_push($orderArray, [
+                //             'order_id' => $order->order_id,
+                //             'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
+                //             'type' => $order->type,
+                //             'time' => $order->updated_at->format('H:i'),
+                //         ]);
+                if ($order->transaction_status === 'settlement') {
+                    $productCollection = Product::where('id', $d->product_id)->get();
+                    $productArray = [];
+                    foreach ($productCollection as $product) {
+                        array_push($productArray, [
+                            'name' => $product->name,
+                            'image' => $product->image,
+                        ]);
+                    }
+                    $petshopCollection = Petshop::where('id', $doctor->petshop_id)->get();
+                    $petshopArray = [];
+                    foreach ($petshopCollection as $petshop) {
+                        array_push($petshopArray, [
+                            'petshop_name' => $petshop->petshop_name,
+                        ]);
+                    }
+                    array_push($response, [
+                        'orders' => $d,
+                        'petshop' => $petshopArray,
+                        'product' => $productArray,
+                        'links' => 'product-transaction/' . $d->order_id,
+                    ]);
+                }
+            }
+            return response()->json($response);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             Log::error($errorMessage);

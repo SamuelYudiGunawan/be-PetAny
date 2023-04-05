@@ -122,6 +122,8 @@ Route::get('/get-product/{id}', [ProductController::class, 'getProduct']);
 Route::delete('/delete-product/{id}', [ProductController::class, 'deleteProduct'])->middleware(['auth:sanctum']);
 Route::post('/edit-product/{id}', [ProductController::class, 'editProduct'])->middleware(['auth:sanctum']);
 Route::get('/product-form', [ProductController::class, 'getProductForm']);
+Route::get('/get-user-product-transaction', [ProductController::class, 'getAllUserProductTransaction'])->middleware(['auth:sanctum']);
+Route::get('/get-product-transaction/{order_id}', [ProductController::class, 'getProduct'])->middleware(['auth:sanctum']);
     //WISHLIST
     Route::post('/add-wishlist', [WishlistController::class, 'addWishlist'])->middleware(['auth:sanctum']);
     Route::get('/get-wishlist', [WishlistController::class, 'getWishlist'])->middleware(['auth:sanctum']);
