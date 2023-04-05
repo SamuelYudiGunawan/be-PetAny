@@ -180,16 +180,8 @@ class ProductController extends Controller
             $data = Order::where('user_id', Auth::user()->id)->get();
             $response = [];
             foreach($data as $d) {
-                // $doctor = User::where('id', $d->doctor)->first();
-                $order = Order::where('order_id', $d->order_id)->get();
-                // $orderArray = [];
-                // foreach ($orderCollection as $order) {
-                //         array_push($orderArray, [
-                //             'order_id' => $order->order_id,
-                //             'amount' => "Rp " . number_format($order->gross_amount, 0, ',', '.'),
-                //             'type' => $order->type,
-                //             'time' => $order->updated_at->format('H:i'),
-                //         ]);
+                $orderCollection = Order::where('order_id', $d->order_id)->get();
+                foreach ($orderCollection as $order) {
                 if ($order->transaction_status === 'settlement') {
                     $productCollection = Product::where('id', $d->product_id)->get();
                     $productArray = [];
@@ -214,6 +206,7 @@ class ProductController extends Controller
                     ]);
                 }
             }
+        }
             return response()->json($response);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
