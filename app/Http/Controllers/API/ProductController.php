@@ -209,6 +209,9 @@ class ProductController extends Controller
                         ]);
                     }
                     array_push($response, [
+                        'name' => $product->name,
+                        'image' => $product->image,
+                        'quantity' => $d->quantity,
                         'orders' => $orderArray,
                         'petshop' => $petshopArray,
                         'product' => $productArray,
