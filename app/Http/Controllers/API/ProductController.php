@@ -180,6 +180,7 @@ class ProductController extends Controller
             $data = Order::where('user_id', Auth::user()->id)->get();
             $response = [];
             foreach($data as $d) {
+                $petshops = User::where('id', $d->petshop_id)->first();
                 $orderCollection = Order::where('order_id', $d->order_id)->get();
                 foreach ($orderCollection as $order) {
                 if ($order->transaction_status === 'settlement') {
@@ -191,7 +192,7 @@ class ProductController extends Controller
                             'image' => $product->image,
                         ]);
                     }
-                    $petshopCollection = Petshop::where('id', $doctor->petshop_id)->get();
+                    $petshopCollection = Petshop::where('id', $petshops->petshop_id)->get();
                     $petshopArray = [];
                     foreach ($petshopCollection as $petshop) {
                         array_push($petshopArray, [
