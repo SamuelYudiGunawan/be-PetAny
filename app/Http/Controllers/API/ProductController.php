@@ -106,10 +106,15 @@ class ProductController extends Controller
     public function getProduct($id)
     {
         try{
-            $d = Product::where('id', $id)->with('petshop_id')->first();
+            $d = Product::where('id', $id)->first();
+            $petshop = Petshop::where('id', $d->petshop_id)->first();
             return response()->json([
                 'data' => [
-                    "petshop_id" => $d,
+                    "petshop_id" => [
+                        "petshop_address" => $petshop->petshop_address,
+                        "petshop_name" => $petshop->petshop_name,
+                        "petshop_image" => $petshop->petshop_image,
+                    ],
                     "name" => $d->name,
                     "description" => $d->description,
                     "image" => $d->image,
