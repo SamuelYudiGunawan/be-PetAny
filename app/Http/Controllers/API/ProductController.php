@@ -108,7 +108,14 @@ class ProductController extends Controller
         try{
             $d = Product::where('id', $id)->with('petshop_id')->first();
             return response()->json([
-                'data' => $d,
+                'data' => [
+                    "petshop_id" => $d,
+                    "name" => $d->name,
+                    "description" => $d->description,
+                    "image" => $d->image,
+                    "stock" => $d->stock,
+                    "price" => number_format($d->price, 0, ',', '.'),
+                ],
                 'links' => 'api/add-wishlist?product_id=' . $d->id,
             ]);
         } catch (\Exception $e) {
