@@ -115,6 +115,7 @@ class ProductController extends Controller
                         "petshop_name" => $petshop->petshop_name,
                         "petshop_image" => $petshop->petshop_image,
                     ],
+                    "id" => $d->id,
                     "name" => $d->name,
                     "description" => $d->description,
                     "image" => $d->image,
