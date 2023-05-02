@@ -111,6 +111,7 @@ class ProductController extends Controller
             return response()->json([
                 'data' => [
                     "petshop_id" => [
+                        "id" => $petshop->id,
                         "petshop_address" => $petshop->petshop_address,
                         "petshop_name" => $petshop->petshop_name,
                         "petshop_image" => $petshop->petshop_image,
