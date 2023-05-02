@@ -221,8 +221,8 @@ class ProductController extends Controller
                             'name' => $product->name,
                             'image' => $product->image,
                         ]);
-                        $petshops = User::where('id', $product->petshop_id)->first();
-                    $petshopCollection = Petshop::where('id', $petshops->petshop_id)->get();
+                        // $petshops = User::where('id', $product->petshop_id)->first();
+                    $petshopCollection = Petshop::where('id', $product->petshop_id)->first();
                     $petshopArray = [];
                     foreach ($petshopCollection as $petshop) {
                         array_push($petshopArray, [
