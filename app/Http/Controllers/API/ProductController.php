@@ -62,7 +62,13 @@ class ProductController extends Controller
             $response = [];
             foreach ($data as $d) {
                 array_push($response, [
-                    'data' => $d,
+                    'data' => [
+                        "name" => $d->name,
+                        "description" => $d->description,
+                        "image" => $d->image,
+                        "stock" => $d->stock,
+                        "price" => number_format($d->price, 0, ',', '.'),
+                    ],
                     'links' => '/api/get-product/' . $d->id,
                 ]);
             }
