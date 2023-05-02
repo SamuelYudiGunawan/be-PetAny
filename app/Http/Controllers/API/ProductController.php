@@ -222,7 +222,7 @@ class ProductController extends Controller
                             'image' => $product->image,
                         ]);
                         // $petshops = User::where('id', $product->petshop_id)->first();
-                    $petshopCollection = Petshop::where('id', $product->petshop_id)->first();
+                    $petshopCollection = Petshop::where('id', $product->petshop_id)->get();
                     $petshopArray = [];
                     foreach ($petshopCollection as $petshop) {
                         array_push($petshopArray, [
