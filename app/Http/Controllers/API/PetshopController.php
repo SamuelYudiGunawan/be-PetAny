@@ -91,7 +91,7 @@ class PetshopController extends Controller
     {
         try {
             $request->validate([
-                'petshop_image' => 'file|mimes:pdf|max:1024'
+                'petshop_image' => 'file|mimes:png,jpg,jpeg|max:1024'
             ]);
             $petshop = Petshop::findOrFail($id);
             $petshop_image = null;
